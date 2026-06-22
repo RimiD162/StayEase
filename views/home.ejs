@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Stay-Ease — Your all-in-one platform for booking hotels, rentals, and lodges. Premium stays, effortless booking.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/home.css">
+    <title>Stay-Ease — Where Every Stay Feels Like Home</title>
+</head>
+
+<body>
+
+    <!-- ===== Particles Background ===== -->
+    <div class="particles" id="particles" aria-hidden="true"></div>
+
+    <!-- ===== Navbar ===== -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="/home" class="nav-logo" id="nav-logo">
+                <!-- <span class="logo-icon">◆</span> -->
+                <span class="logo-text">Stay<span class="logo-accent">Ease</span></span>
+            </a>
+
+            <div class="nav-links" id="nav-links">
+                <a href="/home" class="nav-link active" id="nav-home">Home</a>
+                <a href="/home/hotel" class="nav-link" id="nav-hotels">Hotels</a>
+                <a href="/home/Rentals" class="nav-link" id="nav-rentals">Rentals</a>
+                <a href="/home/Lodges" class="nav-link" id="nav-lodges">Lodges</a>
+            </div>
+
+            <div class="nav-actions">
+                <button class="btn-ghost" id="btn-login">Log In</button>
+                <button class="btn-primary-sm" id="btn-signup">Get Started</button>
+            </div>
+
+            <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ===== Hero ===== -->
+    <section class="hero" id="hero-section">
+        <div class="hero-glow" aria-hidden="true"></div>
+
+        <div class="hero-content fade-up">
+
+            <h1 class="hero-title">
+                Where Every Stay<br>
+                Feels Like <span class="gradient-text">Home</span>
+            </h1>
+
+            <p class="hero-subtitle">
+                Discover curated hotels, charming rentals, and serene lodges — all in one platform.
+                Book effortlessly and save more with exclusive member deals.
+            </p>
+        </div>
+    <!-- ===== Categories ===== -->
+    <section class="categories" id="categories">
+        <div class="section-container">
+            <div class="section-header fade-up">
+                <!-- <span class="section-tag">Browse By Type</span> -->
+                <h2 class="section-title">Find Your <span class="gradient-text">Perfect Stay</span></h2>
+                <p class="section-desc">From luxury hotels to cozy lodges, explore curated categories tailored to every
+                    type of traveler.</p>
+            </div>
+
+            <div class="categories-grid">
+                <!-- Hotels -->
+                <a href="/home/hotel" class="category-card fade-up delay-1" id="category-hotels"
+                    style="--card-gradient: linear-gradient(135deg, #7c3aed, #6366f1)">
+                    <div class="category-bg"></div>
+                    <div class="category-content">
+                        <h3>Hotels</h3>
+                        <p>Premium hotels with world-class amenities, room service, and unforgettable experiences in top
+                            destinations.</p>
+                        <span class="category-link">
+                            Explore Hotels
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 12h14"></path>
+                                <path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                        </span>
+                    </div>
+                </a>
+
+                <!-- Rentals -->
+                <a href="/home/Rentals" class="category-card fade-up delay-2" id="category-rentals"
+                    style="--card-gradient: linear-gradient(135deg, #ec4899, #f97316)">
+                    <div class="category-bg"></div>
+                    <div class="category-content">
+                        <h3>Rentals</h3>
+                        <p>Private homes, apartments, and villas with full kitchens — perfect for extended stays and
+                            family vacations.</p>
+                        <span class="category-link">
+                            Explore Rentals
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 12h14"></path>
+                                <path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                        </span>
+                    </div>
+                </a>
+
+                <!-- Lodges -->
+                <a href="/home/Lodges" class="category-card fade-up delay-3" id="category-lodges"
+                    style="--card-gradient: linear-gradient(135deg, #14b8a6, #22c55e)">
+                    <div class="category-bg"></div>
+                    <div class="category-content">
+                        <h3>Lodges</h3>
+                        <p>Nature retreats and mountain lodges surrounded by breathtaking scenery — disconnect and
+                            recharge.</p>
+                        <span class="category-link">
+                            Explore Lodges
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 12h14"></path>
+                                <path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                        </span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+    <!-- ===== Scripts ===== -->
+    <script>
+        // ===== Scroll-triggered fade-up animations =====
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+        // ===== Navbar scroll effect =====
+        const navbar = document.getElementById('navbar');
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.scrollY;
+            if (currentScroll > 60) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+            lastScroll = currentScroll;
+        }, { passive: true });
+
+        // ===== Mobile navigation toggle =====
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const navLinks = document.getElementById('nav-links');
+        mobileToggle.addEventListener('click', () => {
+            mobileToggle.classList.toggle('active');
+            navLinks.classList.toggle('open');
+            document.body.style.overflow = navLinks.classList.contains('open') ? 'hidden' : '';
+        });
+
+        // Close mobile nav when clicking a link
+        navLinks.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileToggle.classList.remove('active');
+                navLinks.classList.remove('open');
+                document.body.style.overflow = '';
+            });
+        });
+
+        // ===== Animated stat counters =====
+        const statObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const target = parseFloat(el.dataset.target);
+                    const suffix = el.dataset.suffix || '';
+                    const isDecimal = target % 1 !== 0;
+                    const duration = 2000;
+                    const startTime = performance.now();
+
+                    function animate(currentTime) {
+                        const elapsed = currentTime - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        // Ease-out cubic
+                        const eased = 1 - Math.pow(1 - progress, 3);
+                        const current = target * eased;
+
+                        if (isDecimal) {
+                            el.textContent = current.toFixed(1) + suffix;
+                        } else {
+                            el.textContent = Math.floor(current) + suffix;
+                        }
+
+                        if (progress < 1) {
+                            requestAnimationFrame(animate);
+                        }
+                    }
+                    requestAnimationFrame(animate);
+                    statObserver.unobserve(el);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.stat-number[data-target]').forEach(el => statObserver.observe(el));
+
+        // ===== Floating particles =====
+        const particlesContainer = document.getElementById('particles');
+        function createParticles() {
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                const size = Math.random() * 4 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.setProperty('--dx', (Math.random() - 0.5) * 200 + 'px');
+                particle.style.setProperty('--dy', (Math.random() - 0.5) * 200 + 'px');
+                particle.style.animationDuration = (Math.random() * 15 + 10) + 's';
+                particle.style.animationDelay = (Math.random() * 10) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // ===== Smooth scroll for anchor links =====
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href === '#') return;
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>
