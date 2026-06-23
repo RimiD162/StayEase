@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Explore vacation rentals on Stay-Ease. Private homes, apartments, and villas with full amenities — perfect for families and extended stays.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/listing.css">
+    <title>Vacation Rentals — Stay-Ease</title>
+</head>
+
+<body>
+
+    <!-- ===== Particles Background ===== -->
+    <div class="particles" id="particles" aria-hidden="true"></div>
+
+    <!-- ===== Navbar ===== -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="/home" class="nav-logo" id="nav-logo">
+                <span class="logo-text">Stay<span class="logo-accent">Ease</span></span>
+            </a>
+
+            <div class="nav-links" id="nav-links">
+                <a href="/home" class="nav-link" id="nav-home">Home</a>
+                <a href="/home/hotel" class="nav-link" id="nav-hotels">Hotels</a>
+                <a href="/home/Rentals" class="nav-link active" id="nav-rentals">Rentals</a>
+                <a href="/home/Lodges" class="nav-link" id="nav-lodges">Lodges</a>
+            </div>
+
+            <div class="nav-actions">
+                <button class="btn-ghost" id="btn-login">Log In</button>
+                <button class="btn-primary-sm" id="btn-signup">Get Started</button>
+            </div>
+
+            <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ===== Page Hero ===== -->
+    <section class="page-hero" id="rental-hero">
+        <div class="page-hero-glow rental-glow" aria-hidden="true"></div>
+
+        <div class="page-hero-content fade-up">
+            <div class="page-breadcrumb">
+                <!-- <a href="/home">Home</a> -->
+                <span class="breadcrumb-sep">›</span>
+                <!-- <span class="breadcrumb-current">Rentals</span> -->
+            </div>
+
+            <h1 class="page-title">
+                Your Home,<br>
+                <span class="gradient-text rental-gradient">Away From Home</span>
+            </h1>
+
+            <p class="page-subtitle">
+                Discover private apartments, stylish villas, and cozy homes with full kitchens
+                and living spaces — ideal for families, groups, and long-term stays.
+            </p>
+
+            
+        </div>
+    </section>
+
+    
+
+    <!-- ===== Rental Listings ===== -->
+    
+
+
+    <!-- ===== Why Choose Rentals ===== -->
+    <section class="why-section" id="why-rentals">
+        <div class="why-section-glow rental-glow" aria-hidden="true"></div>
+        <div class="why-container">
+            <div class="why-header fade-up">
+                <h2 class="why-title">Why Choose Our <span class="gradient-text rental-gradient">Rentals</span></h2>
+                <p class="why-subtitle">Every rental is personally vetted for quality, comfort, and authenticity —
+                    giving you a true home-away-from-home experience.</p>
+            </div>
+
+            <div class="why-grid">
+                <div class="why-card rental-card fade-up delay-1" id="why-rental-1">
+                    <h3>Entire Place to Yourself</h3>
+                    <p>No shared spaces — enjoy full privacy with your own kitchen, living room, and bedrooms for a
+                        truly personal experience.</p>
+                </div>
+                <div class="why-card rental-card fade-up delay-2" id="why-rental-2">
+                    <h3>Flexible Stay Duration</h3>
+                    <p>From weekend getaways to month-long stays, our rentals cater to any schedule with discounted
+                        weekly and monthly rates.</p>
+                </div>
+                <div class="why-card rental-card fade-up delay-3" id="why-rental-3">
+                    <h3>Fully Equipped Kitchens</h3>
+                    <p>Cook your own meals, save on dining out, and enjoy the comfort of home cooking with fully stocked
+                        kitchens.</p>
+                </div>
+                <div class="why-card rental-card fade-up delay-4" id="why-rental-4">
+                    <h3>Family & Group Friendly</h3>
+                    <p>Spacious layouts designed for families and groups — multiple bedrooms, play areas, and communal
+                        spaces for bonding.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+
+    <!-- ===== Scripts ===== -->
+    <script>
+        // ===== Scroll-triggered fade-up animations =====
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+        // ===== Navbar scroll effect =====
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 60) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        }, { passive: true });
+
+        // ===== Mobile navigation toggle =====
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const navLinks = document.getElementById('nav-links');
+        mobileToggle.addEventListener('click', () => {
+            mobileToggle.classList.toggle('active');
+            navLinks.classList.toggle('open');
+            document.body.style.overflow = navLinks.classList.contains('open') ? 'hidden' : '';
+        });
+
+        navLinks.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileToggle.classList.remove('active');
+                navLinks.classList.remove('open');
+                document.body.style.overflow = '';
+            });
+        });
+
+        // ===== Animated stat counters =====
+        const statObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const target = parseFloat(el.dataset.target);
+                    const isDecimal = el.dataset.decimal === 'true';
+                    const duration = 2000;
+                    const startTime = performance.now();
+
+                    function animate(currentTime) {
+                        const elapsed = currentTime - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        const eased = 1 - Math.pow(1 - progress, 3);
+                        const current = target * eased;
+
+                        if (isDecimal) {
+                            el.textContent = current.toFixed(1);
+                        } else if (target >= 1000) {
+                            el.textContent = Math.floor(current).toLocaleString() + '+';
+                        } else {
+                            el.textContent = Math.floor(current) + '+';
+                        }
+
+                        if (progress < 1) {
+                            requestAnimationFrame(animate);
+                        }
+                    }
+                    requestAnimationFrame(animate);
+                    statObserver.unobserve(el);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.stat-value[data-target]').forEach(el => statObserver.observe(el));
+
+        // ===== Filter chips interaction =====
+        const filterChips = document.querySelectorAll('.filter-chip');
+        filterChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                filterChips.forEach(c => c.classList.remove('active', 'rental-active'));
+                chip.classList.add('active', 'rental-active');
+            });
+        });
+
+        // ===== Floating particles =====
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 25; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            const size = Math.random() * 4 + 2;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.setProperty('--dx', (Math.random() - 0.5) * 200 + 'px');
+            particle.style.setProperty('--dy', (Math.random() - 0.5) * 200 + 'px');
+            particle.style.animationDuration = (Math.random() * 15 + 10) + 's';
+            particle.style.animationDelay = (Math.random() * 10) + 's';
+            particlesContainer.appendChild(particle);
+        }
+    </script>
+
+</body>
+
+</html>

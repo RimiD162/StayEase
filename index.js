@@ -18,13 +18,13 @@ app.get("/home", (req, res) => {
   res.render("home");
 });
 app.get('/home/hotel',(req,res)=>{
-  res.send("This is all about hotel");
+  res.render("hotel");
 })
 app.get('/home/Rentals',(req,res)=>{
-  res.send("this is all about rent")
+  res.render("Rentals");
 })
 app.get('/home/Lodges',(req,res)=>{
-  res.send("this is all about lodges")
+  res.render("Lodges");
 })
 app.listen(port, () => {
   console.log(`app is listening on port ${port}`);
