@@ -71,6 +71,63 @@
     
 
     <!-- ===== Rental Listings ===== -->
+    <% if (typeof listings !== 'undefined' && listings.length > 0) { %>
+    <section class="listings-section" id="rental-listings">
+        <div class="listings-container">
+            <div class="listings-grid">
+                <% listings.forEach(function(listing) { %>
+                <div class="property-card fade-up">
+                    <div class="card-image">
+                        <% if (listing.image) { %>
+                            <img src="<%= listing.image %>" alt="<%= listing.name %>">
+                        <% } else { %>
+                            <div class="card-image-placeholder rental-placeholder">
+                                <span>🏠</span>
+                            </div>
+                        <% } %>
+                        <div class="card-image-overlay"></div>
+                        <% if (listing.available) { %>
+                            <span class="card-badge badge-deal">Available</span>
+                        <% } %>
+                        <div class="card-rating">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            <%= listing.rating %>.0
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-location">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            <%= listing.location %>
+                        </div>
+                        <h3 class="card-title"><%= listing.name %></h3>
+                        <% if (listing.description) { %>
+                            <p class="card-description"><%= listing.description %></p>
+                        <% } %>
+                        <% if (listing.amenities && listing.amenities.length > 0) { %>
+                        <div class="card-features">
+                            <% const amenityIcons = { WiFi: '📶', Parking: '🅿️', AC: '❄️', Pool: '🏊', Breakfast: '🍳' }; %>
+                            <% listing.amenities.forEach(function(a) { %>
+                                <span class="feature-tag"><%= amenityIcons[a] || '✓' %> <%= a %></span>
+                            <% }); %>
+                        </div>
+                        <% } %>
+                        <div class="card-footer">
+                            <div class="card-price">
+                                <span class="price-amount rental-price">₹<%= listing.price.toLocaleString() %></span>
+                                <span class="price-unit">per night</span>
+                            </div>
+                            <a href="#" class="card-action rental-action">
+                                View Details
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <% }); %>
+            </div>
+        </div>
+    </section>
+    <% } %>
     
 
 

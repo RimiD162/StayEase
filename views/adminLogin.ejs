@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Admin Login - Stay-Ease Dashboard">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/admin.css">
+    <title>Admin Login — Stay-Ease</title>
+</head>
+
+<body>
+    <div class="login-page">
+        <div class="login-bg-glow" aria-hidden="true"></div>
+
+        <div class="login-card">
+            <div class="login-logo">
+                <span class="login-logo-text">Stay<span class="login-logo-accent">Ease</span></span>
+            </div>
+            <h1 class="login-title">Admin Portal</h1>
+            <p class="login-subtitle">Sign in to manage your listings</p>
+
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="login-error show"><%= error %></div>
+            <% } %>
+
+            <form class="login-form" action="/admin/login" method="POST">
+                <div class="login-field">
+                    <label class="login-label" for="login-username">Username</label>
+                    <input class="login-input" type="text" id="login-username" name="username"
+                        placeholder="Enter your username" required autocomplete="username">
+                </div>
+
+                <div class="login-field">
+                    <label class="login-label" for="login-password">Password</label>
+                    <input class="login-input" type="password" id="login-password" name="password"
+                        placeholder="Enter your password" required autocomplete="current-password">
+                </div>
+
+                <button class="login-btn" type="submit" id="login-submit">Sign In</button>
+            </form>
+
+            <div class="login-back">
+                <a href="/home">← Back to Website</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
