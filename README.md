@@ -75,11 +75,7 @@ Open your browser and visit:
 - **Public Portal**: [http://localhost:8080/home](http://localhost:8080/home)
 - **Admin Login**: [http://localhost:8080/admin/login](http://localhost:8080/admin/login)
 
-**Default Credentials:**
-- **Username**: `admin`
-- **Password**: `admin123`
 
----
 
 ## Project Structure
 
