@@ -82,8 +82,9 @@ Open your browser and visit:
 ```text
 Stayandaman/
 ├── models/
-│   ├── AdminProfile.js   # Mongoose Schema for admin profiles
-│   └── Listing.js        # Mongoose Schema for travel listings
+│   ├── Admin.js          # Mongoose Schema for admin accounts
+│   ├── Listing.js        # Mongoose Schema for travel listings
+│   └── User.js           # Mongoose Schema for user accounts
 ├── public/
 │   ├── admin.css         # Main stylesheet for the Admin Dashboard
 │   └── (other css/assets)
