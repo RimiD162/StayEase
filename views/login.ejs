@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Log in to Stayandaman to search hotels, rental properties, and nature lodges.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/auth.css">
+    <title>Log In — Stayandaman</title>
+</head>
+<body class="auth-body">
+
+    <div class="auth-container">
+        <!-- ===== Decorative Left Panel ===== -->
+        <div class="auth-sidebar">
+            <a href="/home" class="auth-sidebar-logo">
+                Stay<span>andaman</span>
+            </a>
+            <div class="auth-sidebar-content">
+                <h1 class="auth-sidebar-title">
+                    Welcome Back to<br>
+                    <span class="highlight">Your Comfort Zone</span>
+                </h1>
+                <p class="auth-sidebar-text">
+                    Log in to continue managing your travels, viewing booked stays, or searching exclusive discounts on hotels, lodges, and vacation rentals.
+                </p>
+            </div>
+            <div class="auth-sidebar-footer">
+                &copy; 2026 Stayandaman. All rights reserved.
+            </div>
+        </div>
+
+        <!-- ===== Form Right Panel ===== -->
+        <div class="auth-content">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <a href="/home" class="auth-logo-mobile">
+                        Stay<span>andaman</span>
+                    </a>
+                    <h2 class="auth-title">Welcome Back</h2>
+                    <p class="auth-subtitle">New to Stayandaman? <a href="/signup">Sign Up</a></p>
+                </div>
+
+                <!-- Alert Banners (Success & Error Messages) -->
+                <% if (success) { %>
+                    <div class="alert-banner alert-banner-success" id="success-banner">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        <span><%= success %></span>
+                    </div>
+                <% } else if (error) { %>
+                    <div class="alert-banner alert-banner-error" id="error-banner">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <span><%= error %></span>
+                    </div>
+                <% } %>
+
+                <form id="login-form" class="auth-form" action="/login" method="POST">
+                    
+                    <!-- Email Address -->
+                    <div class="form-group" id="group-email">
+                        <input type="email" class="form-input" id="email-input" name="email" placeholder=" " required>
+                        <label class="form-label" for="email-input">Email Address</label>
+                        <div class="error-message">Please enter a valid email address.</div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="form-group" id="group-password">
+                        <div class="password-wrapper">
+                            <input type="password" class="form-input" id="password-input" name="password" placeholder=" " required>
+                            <label class="form-label" for="password-input">Password</label>
+                            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('password-input', this)">
+                                <svg id="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </button>
+                        </div>
+                        <div class="error-message">Password is required.</div>
+                    </div>
+
+                    <!-- Actions Row (Remember Me, Forgot Password) -->
+                    <div class="form-actions-row">
+                        <label class="remember-me">
+                            <input type="checkbox" name="rememberMe" id="remember-me-checkbox">
+                            <span>Remember Me</span>
+                        </label>
+                        <a href="#" class="forgot-password" onclick="handleForgotPassword(event)">Forgot Password?</a>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn-auth-submit">Log In</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Scripts ===== -->
+    <script>
+        // Check for URL query params to display toast (for signup success redirects)
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('signupSuccess') === 'true') {
+                const banner = document.createElement('div');
+                banner.className = 'alert-banner alert-banner-success';
+                banner.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span>Registration successful! Please log in.</span>';
+                
+                const card = document.querySelector('.auth-card');
+                const form = document.getElementById('login-form');
+                if (card && form) {
+                    card.insertBefore(banner, form);
+                }
+            }
+        });
+
+        // Password visibility toggle
+        function togglePasswordVisibility(inputId, button) {
+            const input = document.getElementById(inputId);
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+            
+            const svg = button.querySelector('svg');
+            if (type === 'text') {
+                svg.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+            } else {
+                svg.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+            }
+        }
+
+        // Forgot Password Action
+        function handleForgotPassword(e) {
+            e.preventDefault();
+            alert("Forgot Password? Contact admin to reset your credentials.");
+        }
+
+        // Form Validation on Submit
+        const form = document.getElementById('login-form');
+        form.addEventListener('submit', function(e) {
+            let hasError = false;
+
+            // Email validation
+            const email = document.getElementById('email-input');
+            const groupEmail = document.getElementById('group-email');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.value.trim())) {
+                groupEmail.classList.add('has-error');
+                hasError = true;
+            } else {
+                groupEmail.classList.remove('has-error');
+            }
+
+            // Password validation
+            const password = document.getElementById('password-input');
+            const groupPassword = document.getElementById('group-password');
+            if (!password.value) {
+                groupPassword.classList.add('has-error');
+                hasError = true;
+            } else {
+                groupPassword.classList.remove('has-error');
+            }
+
+            if (hasError) {
+                e.preventDefault(); // Stop submission
+            }
+        });
+    </script>
+
+</body>
+</html>

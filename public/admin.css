@@ -1,4 +1,4 @@
-/* ===== Admin Dashboard Styles - Stay-Ease ===== */
+/* ===== Admin Dashboard Styles - Stayandaman ===== */
 
 /* ===== Design Tokens ===== */
 :root {
@@ -363,7 +363,7 @@ button { border: none; cursor: pointer; font-family: var(--admin-font); }
 /* ===== Stat Cards ===== */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 20px;
   margin-bottom: 32px;
 }
@@ -405,6 +405,7 @@ button { border: none; cursor: pointer; font-family: var(--admin-font); }
 .stat-card.hotel-stat::after { background: linear-gradient(90deg, #7c3aed, #6366f1); }
 .stat-card.lodge-stat::after { background: linear-gradient(90deg, #14b8a6, #22c55e); }
 .stat-card.rental-stat::after { background: linear-gradient(90deg, #ec4899, #f97316); }
+.stat-card.user-stat::after { background: linear-gradient(90deg, #f5a623, #f7b731); }
 .stat-card.total-stat::after { background: linear-gradient(90deg, #3b82f6, #06b6d4); }
 
 .stat-icon {
@@ -435,6 +436,11 @@ button { border: none; cursor: pointer; font-family: var(--admin-font); }
 .stat-icon.rental-icon {
   background: rgba(236, 72, 153, 0.1);
   color: #ec4899;
+}
+
+.stat-icon.user-icon {
+  background: rgba(245, 166, 35, 0.1);
+  color: #f5a623;
 }
 
 .stat-icon.total-icon {
@@ -1428,7 +1434,7 @@ button { border: none; cursor: pointer; font-family: var(--admin-font); }
 /* ===== Responsive ===== */
 @media (max-width: 1100px) {
   .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
@@ -1742,9 +1748,24 @@ button { border: none; cursor: pointer; font-family: var(--admin-font); }
     padding: 12px 16px 16px;
   }
 
-  .profile-avatar-large {
+    .profile-avatar-large {
     width: 72px;
     height: 72px;
     font-size: 1.6rem;
   }
+}
+
+.user-inactive-row {
+  opacity: 0.65;
+}
+.btn-export-csv {
+  background-color: #f5a623 !important;
+  color: #1a1f36 !important;
+  border: none !important;
+}
+.btn-export-csv:hover {
+  background-color: #d48c16 !important;
+}
+.btn-export-csv svg {
+  stroke: #1a1f36 !important;
 }

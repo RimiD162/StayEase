@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sign up for Stayandaman to search and book luxury hotels, cozy rentals, and rustic lodges.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/auth.css">
+    <title>Create Account — Stayandaman</title>
+</head>
+<body class="auth-body">
+
+    <div class="auth-container">
+        <!-- ===== Decorative Left Panel ===== -->
+        <div class="auth-sidebar">
+            <a href="/home" class="auth-sidebar-logo">
+                Stay<span>andaman</span>
+            </a>
+            <div class="auth-sidebar-content">
+                <h1 class="auth-sidebar-title">
+                    Start Your<br>
+                    <span class="highlight">Next Adventure</span><br>
+                    With Us.
+                </h1>
+                <p class="auth-sidebar-text">
+                    Join millions of travelers who use Stayandaman to find premium hotels, cozy vacation rentals, and serene nature lodges across the world.
+                </p>
+            </div>
+            <div class="auth-sidebar-footer">
+                &copy; 2026 Stayandaman. All rights reserved.
+            </div>
+        </div>
+
+        <!-- ===== Form Right Panel ===== -->
+        <div class="auth-content">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <a href="/home" class="auth-logo-mobile">
+                        Stay<span>andaman</span>
+                    </a>
+                    <h2 class="auth-title">Create Account</h2>
+                    <p class="auth-subtitle">Already have an account? <a href="/login">Log In</a></p>
+                </div>
+
+                <% if (error) { %>
+                    <div class="alert-banner alert-banner-error">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <span><%= error %></span>
+                    </div>
+                <% } %>
+
+                <form id="signup-form" class="auth-form" action="/signup" method="POST">
+                    
+                    <!-- Profile Photo (Optional) -->
+                    <div class="avatar-upload-wrapper">
+                        <div class="avatar-preview-container" id="avatar-preview-container">
+                            <img src="" alt="Preview" class="avatar-preview-img" id="avatar-preview-img">
+                            <div class="avatar-placeholder" id="avatar-placeholder">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </div>
+                        </div>
+                        <div class="avatar-upload-btn-container">
+                            <label class="avatar-upload-btn" for="avatar-file-input">Choose Profile Photo</label>
+                            <input type="file" id="avatar-file-input" accept="image/*" style="display:none;">
+                            <input type="hidden" name="avatar" id="avatar-base64">
+                            <div class="avatar-upload-hint">JPG, PNG or WebP • Max 2MB</div>
+                        </div>
+                    </div>
+
+                    <!-- Full Name -->
+                    <div class="form-group" id="group-fullname">
+                        <input type="text" class="form-input" id="fullname-input" name="fullName" placeholder=" " required>
+                        <label class="form-label" for="fullname-input">Full Name *</label>
+                        <div class="error-message">Full name is required.</div>
+                    </div>
+
+                    <!-- Email & Phone (Row) -->
+                    <div class="form-group-row">
+                        <div class="form-group" id="group-email">
+                            <input type="email" class="form-input" id="email-input" name="email" placeholder=" " required>
+                            <label class="form-label" for="email-input">Email Address *</label>
+                            <div class="error-message">Enter a valid email address.</div>
+                        </div>
+                        <div class="form-group" id="group-phone">
+                            <input type="tel" class="form-input" id="phone-input" name="phone" placeholder=" " required>
+                            <label class="form-label" for="phone-input">Phone Number *</label>
+                            <div class="error-message">Phone number is required.</div>
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="form-group" id="group-password">
+                        <div class="password-wrapper">
+                            <input type="password" class="form-input" id="password-input" name="password" placeholder=" " required minlength="6">
+                            <label class="form-label" for="password-input">Password *</label>
+                            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('password-input', this)">
+                                <svg id="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </button>
+                        </div>
+                        <div class="error-message">Password must be at least 6 characters long.</div>
+                        <!-- Password Strength Indicator -->
+                        <div class="strength-meter">
+                            <div class="strength-bar-container">
+                                <div class="strength-bar" id="strength-bar"></div>
+                            </div>
+                            <div class="strength-text" id="strength-text">Password Strength</div>
+                        </div>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="form-group" id="group-confirm">
+                        <div class="password-wrapper">
+                            <input type="password" class="form-input" id="confirm-input" name="confirmPassword" placeholder=" " required>
+                            <label class="form-label" for="confirm-input">Confirm Password *</label>
+                            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('confirm-input', this)">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </button>
+                        </div>
+                        <div class="error-message">Passwords do not match.</div>
+                    </div>
+
+                    <!-- Gender Radio -->
+                    <div class="gender-group">
+                        <span class="gender-title">Gender</span>
+                        <div class="gender-options">
+                            <label class="gender-label">
+                                <input type="radio" name="gender" value="Male" checked> Male
+                            </label>
+                            <label class="gender-label">
+                                <input type="radio" name="gender" value="Female"> Female
+                            </label>
+                            <label class="gender-label">
+                                <input type="radio" name="gender" value="Other"> Other
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Location / City -->
+                    <div class="form-group" id="group-city">
+                        <input type="text" class="form-input" id="city-input" name="city" placeholder=" ">
+                        <label class="form-label" for="city-input">City / Location</label>
+                    </div>
+
+                    <!-- Terms & Conditions Checkbox -->
+                    <div class="form-group" id="group-terms">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="terms-input" required>
+                            <span>I agree to the <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a> of Stayandaman.</span>
+                        </label>
+                        <div class="error-message" style="margin-top: 4px;">You must accept the Terms & Conditions.</div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn-auth-submit">Create Account</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Scripts ===== -->
+    <script>
+        // Password visibility toggle
+        function togglePasswordVisibility(inputId, button) {
+            const input = document.getElementById(inputId);
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+            
+            // Toggle eye icon shape or opacity
+            const svg = button.querySelector('svg');
+            if (type === 'text') {
+                svg.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+            } else {
+                svg.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+            }
+        }
+
+        // Live Profile Photo base64 encoding and preview
+        const fileInput = document.getElementById('avatar-file-input');
+        const base64Input = document.getElementById('avatar-base64');
+        const previewImg = document.getElementById('avatar-preview-img');
+        const placeholder = document.getElementById('avatar-placeholder');
+
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('File size exceeds the 2MB limit.');
+                    fileInput.value = '';
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    const base64String = evt.target.result;
+                    base64Input.value = base64String;
+                    previewImg.src = base64String;
+                    previewImg.style.display = 'block';
+                    placeholder.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Live Password Strength Meter
+        const passwordInput = document.getElementById('password-input');
+        const strengthBar = document.getElementById('strength-bar');
+        const strengthText = document.getElementById('strength-text');
+
+        passwordInput.addEventListener('input', function() {
+            const val = passwordInput.value;
+            let score = 0;
+
+            if (val.length >= 6) score += 1;
+            if (val.length >= 10) score += 1;
+            if (/[A-Z]/.test(val)) score += 1;
+            if (/[0-9]/.test(val)) score += 1;
+            if (/[^A-Za-z0-9]/.test(val)) score += 1;
+
+            let percentage = '0%';
+            let color = '#ff4d4f';
+            let label = 'Weak';
+
+            if (val.length === 0) {
+                percentage = '0%';
+                label = 'Password Strength';
+                color = 'rgba(255,255,255,0.05)';
+            } else if (score <= 2) {
+                percentage = '33%';
+                color = '#ff4d4f';
+                label = 'Weak';
+            } else if (score <= 4) {
+                percentage = '66%';
+                color = '#faad14';
+                label = 'Medium';
+            } else {
+                percentage = '100%';
+                color = '#52c41a';
+                label = 'Strong';
+            }
+
+            strengthBar.style.width = percentage;
+            strengthBar.style.background = color;
+            strengthText.textContent = label;
+            strengthText.style.color = val.length === 0 ? 'var(--auth-text-muted)' : color;
+        });
+
+        // Form Validation on Submit
+        const form = document.getElementById('signup-form');
+        form.addEventListener('submit', function(e) {
+            let hasError = false;
+
+            // Full Name validation
+            const fullName = document.getElementById('fullname-input');
+            const groupFullName = document.getElementById('group-fullname');
+            if (!fullName.value.trim()) {
+                groupFullName.classList.add('has-error');
+                hasError = true;
+            } else {
+                groupFullName.classList.remove('has-error');
+            }
+
+            // Email validation
+            const email = document.getElementById('email-input');
+            const groupEmail = document.getElementById('group-email');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.value.trim())) {
+                groupEmail.classList.add('has-error');
+                hasError = true;
+            } else {
+                groupEmail.classList.remove('has-error');
+            }
+
+            // Phone validation
+            const phone = document.getElementById('phone-input');
+            const groupPhone = document.getElementById('group-phone');
+            if (!phone.value.trim()) {
+                groupPhone.classList.add('has-error');
+                hasError = true;
+            } else {
+                groupPhone.classList.remove('has-error');
+            }
+
+            // Password validation
+            const password = document.getElementById('password-input');
+            const groupPassword = document.getElementById('group-password');
+            if (password.value.length < 6) {
+                groupPassword.classList.add('has-error');
+                hasError = true;
+            } else {
+                groupPassword.classList.remove('has-error');
+            }
+
+            // Confirm Password validation
+            const confirm = document.getElementById('confirm-input');
+            const groupConfirm = document.getElementById('group-confirm');
+            if (confirm.value !== password.value) {
+                groupConfirm.classList.add('has-error');
+                hasError = true;
+            } else {
+                groupConfirm.classList.remove('has-error');
+            }
+
+            // Terms validation
+            const terms = document.getElementById('terms-input');
+            const groupTerms = document.getElementById('group-terms');
+            if (!terms.checked) {
+                groupTerms.classList.add('has-error');
+                hasError = true;
+            } else {
+                groupTerms.classList.remove('has-error');
+            }
+
+            if (hasError) {
+                e.preventDefault(); // Stop submission
+            }
+        });
+    </script>
+
+</body>
+</html>

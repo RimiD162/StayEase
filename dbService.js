@@ -2,7 +2,8 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import Listing from "./models/Listing.js";
-import AdminProfile from "./models/AdminProfile.js";
+import Admin from "./models/Admin.js";
+import User from "./models/User.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,17 +20,23 @@ if (!mongoUrl || mongoUrl.includes("xxxxx")) {
 
 // Initial structure for JSON db
 const defaultDb = {
+  users: [],
   listings: [],
-  profile: {
-    username: "admin",
-    displayName: "Admin",
-    email: "admin@stayease.com",
-    phone: "+91 98765 43210",
-    location: "Shimla, India",
-    website: "https://stayease.com",
-    bio: "Stay-Ease Administrator",
-    avatar: ""
-  }
+  admins: [
+    {
+      id: "1",
+      fullName: "Super Admin",
+      username: "admin",
+      email: "admin@stayandaman.com",
+      phone: "+91 98765 43210",
+      avatar: "",
+      location: "Shimla, India",
+      website: "https://stayandaman.com",
+      bio: "Stayandaman Administrator",
+      createdAt: "2025-01-01",
+      lastLogin: null
+    }
+  ]
 };
 
 // Helper to read JSON DB
@@ -40,7 +47,11 @@ function readJsonDb() {
       return defaultDb;
     }
     const data = fs.readFileSync(JSON_DB_PATH, "utf8");
-    return JSON.parse(data);
+    const db = JSON.parse(data);
+    if (!db.users) db.users = [];
+    if (!db.admins) db.admins = [];
+    if (!db.listings) db.listings = [];
+    return db;
   } catch (err) {
     console.error("Error reading JSON DB:", err);
     return defaultDb;
@@ -79,7 +90,6 @@ export const dbService = {
       }
     }
     
-    // JSON fallback
     const db = readJsonDb();
     let items = db.listings;
     if (filter.category) {
@@ -99,7 +109,7 @@ export const dbService = {
     }
 
     const db = readJsonDb();
-    return db.listings.find(item => item._id === id) || null;
+    return db.listings.find(item => item._id === id || item.id === id) || null;
   },
 
   async createListing(data) {
@@ -135,7 +145,7 @@ export const dbService = {
     }
 
     const db = readJsonDb();
-    const idx = db.listings.findIndex(item => item._id === id);
+    const idx = db.listings.findIndex(item => item._id === id || item.id === id);
     if (idx === -1) return null;
     
     db.listings[idx] = {
@@ -157,31 +167,40 @@ export const dbService = {
     }
 
     const db = readJsonDb();
-    const idx = db.listings.findIndex(item => item._id === id);
+    const idx = db.listings.findIndex(item => item._id === id || item.id === id);
     if (idx === -1) return null;
     const deleted = db.listings.splice(idx, 1)[0];
     writeJsonDb(db);
     return deleted;
   },
 
-  // ===== Profile operations =====
+  // ===== Legacy/Dashboard Admin Profile compatibility functions =====
   async getAdminProfile() {
     if (!useJsonDb) {
       try {
-        let profile = await AdminProfile.findOne({ username: "admin" });
-        if (!profile) {
-          profile = new AdminProfile({
+        let admin = await Admin.findOne({ username: "admin" });
+        if (!admin) {
+          admin = new Admin({
+            fullName: "Super Admin",
             username: "admin",
-            displayName: "Admin",
-            email: "admin@stayease.com",
+            email: "admin@stayandaman.com",
             phone: "+91 98765 43210",
             location: "Shimla, India",
-            website: "https://stayease.com",
-            bio: "Stay-Ease Administrator"
+            website: "https://stayandaman.com",
+            bio: "Stayandaman Administrator"
           });
-          await profile.save();
+          await admin.save();
         }
-        return profile;
+        return {
+          username: admin.username,
+          displayName: admin.fullName,
+          email: admin.email,
+          phone: admin.phone,
+          location: admin.location,
+          website: admin.website,
+          bio: admin.bio,
+          avatar: admin.avatar
+        };
       } catch (err) {
         console.error("Mongoose getAdminProfile failed, falling back:", err.message);
         dbService.setFallbackActive();
@@ -189,26 +208,61 @@ export const dbService = {
     }
 
     const db = readJsonDb();
-    return db.profile;
+    let admin = db.admins.find(a => a.username === "admin");
+    if (!admin) {
+      admin = {
+        id: "1",
+        fullName: "Super Admin",
+        username: "admin",
+        email: "admin@stayandaman.com",
+        phone: "+91 98765 43210",
+        location: "Shimla, India",
+        website: "https://stayandaman.com",
+        bio: "Stayandaman Administrator",
+        avatar: "",
+        createdAt: new Date().toISOString(),
+        lastLogin: null
+      };
+      db.admins.push(admin);
+      writeJsonDb(db);
+    }
+    return {
+      username: admin.username,
+      displayName: admin.fullName,
+      email: admin.email,
+      phone: admin.phone,
+      location: admin.location,
+      website: admin.website,
+      bio: admin.bio,
+      avatar: admin.avatar
+    };
   },
 
   async updateAdminProfile(data) {
     if (!useJsonDb) {
       try {
-        let profile = await AdminProfile.findOne({ username: "admin" });
-        if (!profile) {
-          profile = new AdminProfile({ username: "admin" });
+        let admin = await Admin.findOne({ username: "admin" });
+        if (!admin) {
+          admin = new Admin({ username: "admin", fullName: data.displayName || "Admin", email: data.email });
         }
-        profile.displayName = data.displayName;
-        profile.email = data.email;
-        profile.phone = data.phone;
-        profile.location = data.location;
-        profile.website = data.website;
-        profile.bio = data.bio;
-        profile.avatar = data.avatar;
-        profile.updatedAt = Date.now();
-        await profile.save();
-        return profile;
+        admin.fullName = data.displayName || admin.fullName;
+        admin.email = data.email || admin.email;
+        admin.phone = data.phone || admin.phone;
+        admin.location = data.location || admin.location;
+        admin.website = data.website || admin.website;
+        admin.bio = data.bio || admin.bio;
+        admin.avatar = data.avatar || admin.avatar;
+        await admin.save();
+        return {
+          username: admin.username,
+          displayName: admin.fullName,
+          email: admin.email,
+          phone: admin.phone,
+          location: admin.location,
+          website: admin.website,
+          bio: admin.bio,
+          avatar: admin.avatar
+        };
       } catch (err) {
         console.error("Mongoose updateAdminProfile failed, falling back:", err.message);
         dbService.setFallbackActive();
@@ -216,12 +270,331 @@ export const dbService = {
     }
 
     const db = readJsonDb();
-    db.profile = {
-      ...db.profile,
-      ...data,
-      updatedAt: new Date().toISOString()
+    let idx = db.admins.findIndex(a => a.username === "admin");
+    if (idx === -1) {
+      const newAdmin = {
+        id: "json_admin_" + Math.random().toString(36).substr(2, 9),
+        fullName: data.displayName || "Admin",
+        username: "admin",
+        email: data.email || "admin@stayandaman.com",
+        phone: data.phone || "",
+        location: data.location || "",
+        website: data.website || "",
+        bio: data.bio || "",
+        avatar: data.avatar || "",
+        createdAt: new Date().toISOString(),
+        lastLogin: null
+      };
+      db.admins.push(newAdmin);
+      writeJsonDb(db);
+      return {
+        username: newAdmin.username,
+        displayName: newAdmin.fullName,
+        email: newAdmin.email,
+        phone: newAdmin.phone,
+        location: newAdmin.location,
+        website: newAdmin.website,
+        bio: newAdmin.bio,
+        avatar: newAdmin.avatar
+      };
+    }
+    
+    db.admins[idx] = {
+      ...db.admins[idx],
+      fullName: data.displayName || db.admins[idx].fullName,
+      email: data.email || db.admins[idx].email,
+      phone: data.phone || db.admins[idx].phone,
+      location: data.location || db.admins[idx].location,
+      website: data.website || db.admins[idx].website,
+      bio: data.bio || db.admins[idx].bio,
+      avatar: data.avatar || db.admins[idx].avatar
     };
     writeJsonDb(db);
-    return db.profile;
+    return {
+      username: db.admins[idx].username,
+      displayName: db.admins[idx].fullName,
+      email: db.admins[idx].email,
+      phone: db.admins[idx].phone,
+      location: db.admins[idx].location,
+      website: db.admins[idx].website,
+      bio: db.admins[idx].bio,
+      avatar: db.admins[idx].avatar
+    };
+  },
+
+  // ===== User Operations (Legacy wrappers for safety) =====
+  async getUsers(filter = {}) {
+    return this.getAllUsers(filter);
+  },
+
+  async getUserById(id) {
+    if (!useJsonDb) {
+      try {
+        return await User.findById(id);
+      } catch (err) {
+        console.error("Mongoose getUserById failed:", err.message);
+      }
+    }
+    const db = readJsonDb();
+    return db.users.find(item => item._id === id || item.id === id) || null;
+  },
+
+  async getUserByEmail(email) {
+    return this.findUserByEmail(email);
+  },
+
+  async createUser(data) {
+    return this.createUserRecord(data);
+  },
+
+  async updateUser(id, data) {
+    return this.updateUserRecord(id, data);
+  },
+
+  async deleteUser(id) {
+    return this.deleteUserRecord(id);
+  },
+
+  // ===== Newly Requested Functions for both User and Admin =====
+  
+  // 1. findByUsernameAndEmail(username, email)
+  async findUserByUsernameAndEmail(username, email) {
+    if (!username || !email) return null;
+    if (!useJsonDb) {
+      try {
+        return await User.findOne({
+          username: username.toLowerCase().trim(),
+          email: email.toLowerCase().trim()
+        });
+      } catch (err) {
+        console.error("Mongoose findUserByUsernameAndEmail failed:", err.message);
+      }
+    }
+    const db = readJsonDb();
+    return db.users.find(u => 
+      u.username && u.email &&
+      u.username.toLowerCase().trim() === username.toLowerCase().trim() && 
+      u.email.toLowerCase().trim() === email.toLowerCase().trim()
+    ) || null;
+  },
+
+  async findAdminByUsernameAndEmail(username, email) {
+    if (!username || !email) return null;
+    if (!useJsonDb) {
+      try {
+        return await Admin.findOne({
+          username: username.trim(), // Note: Admin username is case-sensitive or standard
+          email: email.toLowerCase().trim()
+        });
+      } catch (err) {
+        console.error("Mongoose findAdminByUsernameAndEmail failed:", err.message);
+      }
+    }
+    const db = readJsonDb();
+    return db.admins.find(a => 
+      a.username && a.email &&
+      a.username.trim() === username.trim() && 
+      a.email.toLowerCase().trim() === email.toLowerCase().trim()
+    ) || null;
+  },
+
+  // 2. findByUsername(username)
+  async findUserByUsername(username) {
+    if (!username) return null;
+    if (!useJsonDb) {
+      try {
+        return await User.findOne({ username: username.toLowerCase().trim() });
+      } catch (err) {
+        console.error("Mongoose findUserByUsername failed:", err.message);
+      }
+    }
+    const db = readJsonDb();
+    return db.users.find(u => u.username && u.username.toLowerCase().trim() === username.toLowerCase().trim()) || null;
+  },
+
+  async findAdminByUsername(username) {
+    if (!username) return null;
+    if (!useJsonDb) {
+      try {
+        return await Admin.findOne({ username: username.trim() });
+      } catch (err) {
+        console.error("Mongoose findAdminByUsername failed:", err.message);
+      }
+    }
+    const db = readJsonDb();
+    return db.admins.find(a => a.username && a.username.trim() === username.trim()) || null;
+  },
+
+  // 3. findByEmail(email)
+  async findUserByEmail(email) {
+    if (!email) return null;
+    if (!useJsonDb) {
+      try {
+        return await User.findOne({ email: email.toLowerCase().trim() });
+      } catch (err) {
+        console.error("Mongoose findUserByEmail failed:", err.message);
+      }
+    }
+    const db = readJsonDb();
+    return db.users.find(u => u.email && u.email.toLowerCase().trim() === email.toLowerCase().trim()) || null;
+  },
+
+  async findAdminByEmail(email) {
+    if (!email) return null;
+    if (!useJsonDb) {
+      try {
+        return await Admin.findOne({ email: email.toLowerCase().trim() });
+      } catch (err) {
+        console.error("Mongoose findAdminByEmail failed:", err.message);
+      }
+    }
+    const db = readJsonDb();
+    return db.admins.find(a => a.email && a.email.toLowerCase().trim() === email.toLowerCase().trim()) || null;
+  },
+
+  // 4. createRecord(data)
+  async createUserRecord(data) {
+    if (!useJsonDb) {
+      try {
+        const user = new User(data);
+        return await user.save();
+      } catch (err) {
+        console.error("Mongoose createUserRecord failed:", err.message);
+      }
+    }
+    const db = readJsonDb();
+    const newUser = {
+      _id: "json_user_" + Math.random().toString(36).substr(2, 9),
+      ...data,
+      isActive: data.isActive !== undefined ? data.isActive : true,
+      createdAt: data.createdAt ? new Date(data.createdAt).toISOString() : new Date().toISOString()
+    };
+    db.users.push(newUser);
+    writeJsonDb(db);
+    return newUser;
+  },
+
+  async createAdminRecord(data) {
+    if (!useJsonDb) {
+      try {
+        const admin = new Admin(data);
+        return await admin.save();
+      } catch (err) {
+        console.error("Mongoose createAdminRecord failed:", err.message);
+      }
+    }
+    const db = readJsonDb();
+    const newAdmin = {
+      _id: "json_admin_" + Math.random().toString(36).substr(2, 9),
+      ...data,
+      createdAt: data.createdAt ? new Date(data.createdAt).toISOString() : new Date().toISOString()
+    };
+    db.admins.push(newAdmin);
+    writeJsonDb(db);
+    return newAdmin;
+  },
+
+  // 5. updateRecord(id, data)
+  async updateUserRecord(id, data) {
+    if (!useJsonDb) {
+      try {
+        return await User.findByIdAndUpdate(id, data, { new: true });
+      } catch (err) {
+        console.error("Mongoose updateUserRecord failed:", err.message);
+      }
+    }
+    const db = readJsonDb();
+    const idx = db.users.findIndex(u => u._id === id || u.id === id);
+    if (idx === -1) return null;
+    db.users[idx] = {
+      ...db.users[idx],
+      ...data
+    };
+    writeJsonDb(db);
+    return db.users[idx];
+  },
+
+  async updateAdminRecord(id, data) {
+    if (!useJsonDb) {
+      try {
+        return await Admin.findByIdAndUpdate(id, data, { new: true });
+      } catch (err) {
+        console.error("Mongoose updateAdminRecord failed:", err.message);
+      }
+    }
+    const db = readJsonDb();
+    const idx = db.admins.findIndex(a => a._id === id || a.id === id);
+    if (idx === -1) return null;
+    db.admins[idx] = {
+      ...db.admins[idx],
+      ...data
+    };
+    writeJsonDb(db);
+    return db.admins[idx];
+  },
+
+  // 6. deleteRecord(id)
+  async deleteUserRecord(id) {
+    if (!useJsonDb) {
+      try {
+        return await User.findByIdAndDelete(id);
+      } catch (err) {
+        console.error("Mongoose deleteUserRecord failed:", err.message);
+      }
+    }
+    const db = readJsonDb();
+    const idx = db.users.findIndex(u => u._id === id || u.id === id);
+    if (idx === -1) return null;
+    const deleted = db.users.splice(idx, 1)[0];
+    writeJsonDb(db);
+    return deleted;
+  },
+
+  async deleteAdminRecord(id) {
+    if (!useJsonDb) {
+      try {
+        return await Admin.findByIdAndDelete(id);
+      } catch (err) {
+        console.error("Mongoose deleteAdminRecord failed:", err.message);
+      }
+    }
+    const db = readJsonDb();
+    const idx = db.admins.findIndex(a => a._id === id || a.id === id);
+    if (idx === -1) return null;
+    const deleted = db.admins.splice(idx, 1)[0];
+    writeJsonDb(db);
+    return deleted;
+  },
+
+  // 7. getAllUsers() & getAllAdmins()
+  async getAllUsers(filter = {}) {
+    if (!useJsonDb) {
+      try {
+        return await User.find(filter).sort({ createdAt: -1 });
+      } catch (err) {
+        console.error("Mongoose getAllUsers failed:", err.message);
+      }
+    }
+    const db = readJsonDb();
+    let items = db.users || [];
+    if (filter.gender) {
+      items = items.filter(item => item.gender === filter.gender);
+    }
+    if (filter.city) {
+      items = items.filter(item => item.city && item.city.toLowerCase().includes(filter.city.toLowerCase()));
+    }
+    return [...items].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  },
+
+  async getAllAdmins(filter = {}) {
+    if (!useJsonDb) {
+      try {
+        return await Admin.find(filter).sort({ createdAt: -1 });
+      } catch (err) {
+        console.error("Mongoose getAllAdmins failed:", err.message);
+      }
+    }
+    const db = readJsonDb();
+    return [...(db.admins || [])].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }
 };

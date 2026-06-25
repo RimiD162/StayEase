@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Stay-Ease Admin Access Portal.">
+  <meta name="description" content="Log in to Stay-Ease to explore hotels, nature lodges, and rentals.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/auth.css">
-  <title>Admin Login — Stay-Ease</title>
+  <title>Log In — Stay-Ease</title>
 </head>
-<body class="auth-body admin-theme">
+<body class="auth-body user-theme">
 
   <div class="auth-container">
     <!-- ===== Decorative Left Panel ===== -->
@@ -20,15 +20,15 @@
       </a>
       <div class="auth-sidebar-content">
         <h1 class="auth-sidebar-title">
-          Admin Portal<br>
-          <span class="highlight">Control & Manage</span>
+          Welcome Back to<br>
+          <span class="highlight">Explore & Stay</span>
         </h1>
         <p class="auth-sidebar-text">
-          Sign in using your administrator credentials to manage listings, inspect user registration records, and modify catalog inventories.
+          Access your account to seamlessly browse premium accommodations, review booked stays, or customize your profile.
         </p>
       </div>
       <div class="auth-sidebar-footer">
-        &copy; 2026 Stay-Ease. Admin System.
+        &copy; 2026 Stay-Ease. All rights reserved.
       </div>
     </div>
 
@@ -39,8 +39,8 @@
           <a href="/" class="auth-logo-mobile">
             Stay<span>Ease</span>
           </a>
-          <h2 class="auth-title">Admin Sign In</h2>
-          <p class="auth-subtitle">Authorized personnel only.</p>
+          <h2 class="auth-title">Welcome Back</h2>
+          <p class="auth-subtitle">New to Stay-Ease? <a href="/user/signup">Create an account &rarr;</a></p>
         </div>
 
         <!-- Success or Error Alerts -->
@@ -65,9 +65,9 @@
           </div>
         <% } %>
 
-        <form id="admin-login-form" class="auth-form" action="/admin/login" method="POST">
+        <form id="user-login-form" class="auth-form" action="/user/login" method="POST">
           
-          <!-- Admin Username Input -->
+          <!-- Username Input -->
           <div class="form-group" id="group-username">
             <div class="input-icon-wrapper">
               <div class="input-icon">
@@ -77,13 +77,13 @@
                 </svg>
               </div>
               <input type="text" class="form-input" id="username-input" name="username" placeholder=" " required autocomplete="username" value="<%= typeof oldValues !== 'undefined' ? oldValues.username : '' %>">
-              <label class="form-label" for="username-input">Admin Username</label>
+              <label class="form-label" for="username-input">Username</label>
               <div class="input-focus-line"></div>
             </div>
-            <div class="error-msg">Please enter your admin username.</div>
+            <div class="error-msg">Please enter your username.</div>
           </div>
 
-          <!-- Admin Email Address Input -->
+          <!-- Email Address Input -->
           <div class="form-group" id="group-email">
             <div class="input-icon-wrapper">
               <div class="input-icon">
@@ -93,24 +93,32 @@
                 </svg>
               </div>
               <input type="email" class="form-input" id="email-input" name="email" placeholder=" " required autocomplete="email" value="<%= typeof oldValues !== 'undefined' ? oldValues.email : '' %>">
-              <label class="form-label" for="email-input">Admin Email</label>
+              <label class="form-label" for="email-input">Email Address</label>
               <div class="input-focus-line"></div>
             </div>
-            <div class="error-msg">Please enter a valid admin email address.</div>
+            <div class="error-msg">Please enter a valid email address.</div>
+          </div>
+
+          <!-- Actions: Remember Me -->
+          <div class="form-actions-row">
+            <label class="remember-me">
+              <input type="checkbox" name="rememberMe" id="remember-me-checkbox">
+              <span>Remember Me (7 Days)</span>
+            </label>
           </div>
 
           <!-- Submit Button -->
           <button type="submit" class="btn-auth-submit">
-            Enter Portal
+            Log In as User
           </button>
 
-          <!-- Back link to landing page -->
+          <!-- Back link -->
           <a href="/" class="auth-back-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="19" y1="12" x2="5" y2="12"/>
               <polyline points="12 19 5 12 12 5"/>
             </svg>
-            &larr; Back to Home
+            Back to Home
           </a>
         </form>
       </div>
@@ -118,7 +126,7 @@
   </div>
 
   <script>
-    const form = document.getElementById('admin-login-form');
+    const form = document.getElementById('user-login-form');
     const card = document.getElementById('auth-card-element');
     const serverError = document.getElementById('server-error-banner');
 

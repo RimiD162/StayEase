@@ -1,6 +1,6 @@
-# Stay-Ease 🏨🏔️🏠
+# Stayandaman 🏨🏔️🏠
 
-Welcome to **Stay-Ease**, a modern, premium travel and tourism web application that features sections for Hotels, Lodges, and Rentals, along with a full-featured, secure, and beautiful Admin Dashboard.
+Welcome to **Stayandaman**, a modern, premium travel and tourism web application that features sections for Hotels, Lodges, and Rentals, along with a full-featured, secure, and beautiful Admin Dashboard.
 
 ## Features
 
@@ -32,7 +32,7 @@ Welcome to **Stay-Ease**, a modern, premium travel and tourism web application t
 - **Frontend**: HTML5, EJS templates, and custom modern CSS with glassmorphism, HSL tailored variables, and micro-animations.
 - **Backend**: Node.js and Express.
 - **Database Layer (`dbService.js`)**: A custom-built, resilient data access layer with dual-mode storage:
-  - **Mongoose / MongoDB Mode**: Standard mode that stores documents in MongoDB database (`stayease`).
+  - **Mongoose / MongoDB Mode**: Standard mode that stores documents in MongoDB database (`stayandaman`).
   - **Auto-Fallback JSON Database (`db.json`)**: If the database URL contains the placeholder (`xxxxx`) or the connection fails/times out, the application automatically flags and switches to a local file-based JSON database. This ensures the app is 100% testable out-of-the-box without manual database configuration.
 - **Image Processing**: Base64 data URIs for listing images and admin avatars, enabling inline previews and database persistence.
 - **Authentication**: Session-based auth via `express-session`.
@@ -49,7 +49,7 @@ Welcome to **Stay-Ease**, a modern, premium travel and tourism web application t
 
 1. Clone the repository and navigate to the project directory:
    ```bash
-   cd Stay-Ease
+   cd Stayandaman
    ```
 
 2. Install dependencies:
@@ -80,7 +80,7 @@ Open your browser and visit:
 ## Project Structure
 
 ```text
-Stay-Ease/
+Stayandaman/
 ├── models/
 │   ├── AdminProfile.js   # Mongoose Schema for admin profiles
 │   └── Listing.js        # Mongoose Schema for travel listings

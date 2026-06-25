@@ -4,15 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Stay-Ease Admin Dashboard — Manage Hotels, Lodges, and Rentals">
+    <meta name="description" content="Stayandaman Admin Dashboard — Manage Hotels, Lodges, and Rentals">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/admin.css">
-    <title>Admin Dashboard — Stay-Ease</title>
+    <title>Admin Dashboard — Stayandaman</title>
 </head>
 
 <body class="admin-body">
+    <form action="/admin/logout" method="POST" id="admin-logout-form" style="display:none;"></form>
     <div class="admin-layout">
 
         <!-- ===== Sidebar Overlay (Mobile) ===== -->
@@ -22,7 +23,7 @@
         <aside class="admin-sidebar" id="admin-sidebar">
             <div class="sidebar-header">
                 <div class="sidebar-logo">
-                    <span class="sidebar-logo-text">Stay<span class="sidebar-logo-accent">Ease</span></span>
+                    <span class="sidebar-logo-text">Stay<span class="sidebar-logo-accent">andaman</span></span>
                     <span class="sidebar-badge">Admin</span>
                 </div>
             </div>
@@ -53,6 +54,12 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                     Manage Rentals
                     <span class="link-count" id="rental-count-badge">0</span>
+                </a>
+
+                <a class="sidebar-link" data-page="users" id="nav-users">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    Manage Users
+                    <span class="link-count" id="user-count-badge">0</span>
                 </a>
 
                 <div class="sidebar-section-label">Account</div>
@@ -90,7 +97,7 @@
                             <div class="admin-role">Administrator</div>
                         </div>
                     </div>
-                    <a href="/admin/logout" class="topbar-logout" id="btn-logout">
+                    <a href="#" onclick="event.preventDefault(); document.getElementById('admin-logout-form').submit();" class="topbar-logout" id="btn-logout">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                         Logout
                     </a>
@@ -128,6 +135,16 @@
                             <div class="stat-info">
                                 <div class="stat-label">Total Rentals</div>
                                 <div class="stat-number" id="stat-rentals">0</div>
+                            </div>
+                        </div>
+                        <div class="stat-card user-stat" style="cursor: pointer;" onclick="switchPage('users')">
+                            <div class="stat-icon user-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">Total Users</div>
+                                <div class="stat-number" id="stat-users">0</div>
+                                <div class="stat-sub" id="stat-users-today" style="font-size: 0.78rem; opacity: 0.7; margin-top: 4px;">0 New Today</div>
                             </div>
                         </div>
                         <div class="stat-card total-stat">
@@ -259,6 +276,81 @@
                     </div>
                 </div>
 
+                <!-- ===== Users Page ===== -->
+                <div class="admin-page" id="page-users">
+                    <div class="section-header">
+                        <h2 class="section-title-text">Users Directory</h2>
+                        <div class="header-actions">
+                            <a href="/api/admin/users/export" class="btn-add-listing btn-export-csv" id="btn-export-users" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-weight: 600;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                Export CSV
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Search & Filter Bar -->
+                    <div class="filter-card" style="margin-bottom: 24px; background: var(--admin-card-bg); border: 1px solid var(--admin-border); border-radius: var(--admin-radius); padding: 20px;">
+                        <div class="filter-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;">
+                            <!-- Live Search -->
+                            <div class="filter-group" style="display: flex; flex-direction: column; gap: 6px;">
+                                <label class="filter-label" style="font-size: 0.8rem; font-weight: 600; color: var(--admin-text-light);">Search</label>
+                                <input type="text" id="search-users" class="form-input" placeholder="Search by name/email..." style="padding: 10px; font-size: 13px;">
+                            </div>
+                            <!-- Gender Filter -->
+                            <div class="filter-group" style="display: flex; flex-direction: column; gap: 6px;">
+                                <label class="filter-label" style="font-size: 0.8rem; font-weight: 600; color: var(--admin-text-light);">Gender</label>
+                                <select id="filter-user-gender" class="form-select" style="padding: 10px; font-size: 13px;">
+                                    <option value="">All Genders</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <!-- City Filter -->
+                            <div class="filter-group" style="display: flex; flex-direction: column; gap: 6px;">
+                                <label class="filter-label" style="font-size: 0.8rem; font-weight: 600; color: var(--admin-text-light);">City / Location</label>
+                                <input type="text" id="filter-user-city" class="form-input" placeholder="Filter by city..." style="padding: 10px; font-size: 13px;">
+                            </div>
+                            <!-- Date Range Filter -->
+                            <div class="filter-group" style="display: flex; flex-direction: column; gap: 6px;">
+                                <label class="filter-label" style="font-size: 0.8rem; font-weight: 600; color: var(--admin-text-light);">Joined Date Range</label>
+                                <div style="display: flex; gap: 8px; align-items: center;">
+                                    <input type="date" id="filter-user-date-start" class="form-input" style="padding: 10px; font-size: 13px;">
+                                    <span style="color: var(--admin-text-light); font-size: 12px;">to</span>
+                                    <input type="date" id="filter-user-date-end" class="form-input" style="padding: 10px; font-size: 13px;">
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
+                            <button type="button" class="btn-cancel" onclick="resetUserFilters()" style="padding: 8px 16px; font-size: 13px;">Reset Filters</button>
+                        </div>
+                    </div>
+
+                    <div class="table-card">
+                        <div class="table-wrapper">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Avatar</th>
+                                        <th>Full Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Gender</th>
+                                        <th>City</th>
+                                        <th>Joined Date</th>
+                                        <th>Last Login</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-table-body">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- ===== Profile Page ===== -->
                 <div class="admin-page" id="page-profile">
                     <div class="profile-layout">
@@ -291,7 +383,7 @@
                                 </div>
                             </div>
                             <div class="profile-card-footer">
-                                <a href="/admin/logout" class="btn-profile-logout" id="btn-profile-logout">
+                                <a href="#" onclick="event.preventDefault(); document.getElementById('admin-logout-form').submit();" class="btn-profile-logout" id="btn-profile-logout">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                                     Log Out
                                 </a>
@@ -526,6 +618,21 @@
         </div>
     </div>
 
+    <!-- ===== User Detail Modal ===== -->
+    <div class="modal-overlay" id="user-detail-modal">
+        <div class="modal-container" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2 class="modal-title">User Details</h2>
+                <button class="modal-close" onclick="closeUserDetailModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body" id="user-detail-modal-body">
+                <!-- Dynamic user card layout -->
+            </div>
+        </div>
+    </div>
+
     <!-- ===== Toast Container ===== -->
     <div class="toast-container" id="toast-container"></div>
 
@@ -533,6 +640,8 @@
     <script>
         // ===== State =====
         let allListings = [];
+        let allUsers = [];
+        let filteredUsers = [];
         let editingId = null;
         let deletingId = null;
         let currentImageBase64 = '';
@@ -553,6 +662,7 @@
             hotels: 'Manage Hotels',
             lodges: 'Manage Lodges',
             rentals: 'Manage Rentals',
+            users: 'Manage Users',
             profile: 'My Profile'
         };
 
@@ -560,11 +670,17 @@
         document.addEventListener('DOMContentLoaded', () => {
             fetchListings();
             fetchProfile();
+            fetchUsers();
             setupNavigation();
             setupStarRating();
             setupAmenityChips();
             setupAvailabilityToggle();
             setupMobileMenu();
+            setupUserFilters();
+
+            // Check if page initial override is set from backend
+            const initialPage = "<%= typeof activePage !== 'undefined' ? activePage : 'overview' %>";
+            switchPage(initialPage);
         });
 
         // ===== Navigation =====
@@ -643,6 +759,9 @@
             document.getElementById('hotel-count-badge').textContent = allListings.filter(l => l.category === 'Hotel').length;
             document.getElementById('lodge-count-badge').textContent = allListings.filter(l => l.category === 'Lodge').length;
             document.getElementById('rental-count-badge').textContent = allListings.filter(l => l.category === 'Rental').length;
+            if (document.getElementById('user-count-badge')) {
+                document.getElementById('user-count-badge').textContent = allUsers.length;
+            }
         }
 
         // ===== Recent Table =====
@@ -747,6 +866,251 @@
             document.querySelectorAll('#star-rating-input .star-btn').forEach(s => {
                 s.classList.toggle('active', parseInt(s.dataset.value) <= val);
             });
+        }
+
+        // ===== Fetch Users =====
+        async function fetchUsers() {
+            try {
+                const res = await fetch('/api/admin/users');
+                allUsers = await res.json();
+                filteredUsers = [...allUsers];
+                renderUsersAll();
+            } catch (err) {
+                console.error('Failed to fetch users:', err);
+                showToast('Failed to load users', 'error');
+            }
+        }
+
+        // ===== Render Users All =====
+        function renderUsersAll() {
+            renderUsersStats();
+            renderUsersTable();
+            updateBadgeCounts();
+        }
+
+        function renderUsersStats() {
+            if (!document.getElementById('stat-users')) return;
+            document.getElementById('stat-users').textContent = allUsers.length;
+            const today = new Date().toDateString();
+            const newToday = allUsers.filter(u => new Date(u.createdAt).toDateString() === today).length;
+            document.getElementById('stat-users-today').textContent = `${newToday} New Today`;
+        }
+
+        // ===== Render Users Table =====
+        function renderUsersTable() {
+            const tbody = document.getElementById('users-table-body');
+            if (!tbody) return;
+
+            if (filteredUsers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="10"><div class="table-empty"><div class="table-empty-icon">👥</div><div class="table-empty-text">No users found</div><div class="table-empty-sub">Adjust filters or search parameters</div></div></td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filteredUsers.map(u => `
+                <tr class="${!u.isActive ? 'user-inactive-row' : ''}">
+                    <td>
+                        ${u.avatar ? `<img class="table-thumb" style="border-radius: 50%;" src="${u.avatar}" alt="${escapeHtml(u.fullName)}">` : `<div class="table-thumb-placeholder" style="border-radius: 50%; background: #f5a623; color: #1a1f36; font-weight: 700; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 14px;">${escapeHtml(u.fullName).charAt(0).toUpperCase()}</div>`}
+                    </td>
+                    <td class="table-name">${escapeHtml(u.fullName)}</td>
+                    <td>${escapeHtml(u.email)}</td>
+                    <td>${escapeHtml(u.phone)}</td>
+                    <td>${u.gender || '-'}</td>
+                    <td>${escapeHtml(u.city) || '-'}</td>
+                    <td>${u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '-'}</td>
+                    <td>${u.lastLogin ? new Date(u.lastLogin).toLocaleString() : 'Never'}</td>
+                    <td>
+                        <span class="status-badge ${u.isActive ? 'available' : 'unavailable'}" style="cursor: pointer;" onclick="toggleUserStatus('${u._id}')">
+                            <span class="status-dot"></span>
+                            ${u.isActive ? 'Active' : 'Inactive'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="btn-action btn-edit" title="View Details" onclick="viewUserDetails('${u._id}')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </button>
+                            <button class="btn-action btn-delete" title="Delete User" onclick="deleteUserPrompt('${u._id}', '${escapeHtml(u.fullName).replace(/'/g, "\\'")}')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // ===== Toggle User Status =====
+        async function toggleUserStatus(id) {
+            try {
+                const res = await fetch(`/api/admin/users/${id}/toggle`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    showToast(`User status updated to ${data.isActive ? 'Active' : 'Inactive'}.`, 'success');
+                    fetchUsers();
+                } else {
+                    showToast(data.error || 'Failed to toggle status', 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Failed to toggle status', 'error');
+            }
+        }
+
+        // ===== View User Details Modal =====
+        function viewUserDetails(id) {
+            const user = allUsers.find(u => u._id === id);
+            if (!user) return;
+
+            const modalBody = document.getElementById('user-detail-modal-body');
+            const dobFormatted = user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : 'Not provided';
+            const joinedFormatted = user.createdAt ? new Date(user.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : '-';
+            const lastLoginFormatted = user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'Never';
+
+            modalBody.innerHTML = `
+                <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; margin-bottom: 24px;">
+                    <div style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; border: 3px solid var(--admin-border); background: var(--admin-card-bg); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                        ${user.avatar ? `<img src="${user.avatar}" alt="${escapeHtml(user.fullName)}" style="width:100%; height:100%; object-fit:cover;">` : `<div style="font-size: 36px; font-weight: 700; color: #f5a623;">${escapeHtml(user.fullName).charAt(0).toUpperCase()}</div>`}
+                    </div>
+                    <div>
+                        <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 4px; color: var(--admin-text);">${escapeHtml(user.fullName)}</h3>
+                        <span class="status-badge ${user.isActive ? 'available' : 'unavailable'}">
+                            <span class="status-dot"></span>
+                            ${user.isActive ? 'Account Active' : 'Account Deactivated'}
+                        </span>
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 12px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--admin-border); border-radius: 8px; padding: 20px; color: var(--admin-text);">
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 8px;">
+                        <span style="color: var(--admin-text-light); font-size: 13px;">Email Address</span>
+                        <strong style="font-size: 14px;">${escapeHtml(user.email)}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 8px;">
+                        <span style="color: var(--admin-text-light); font-size: 13px;">Phone Number</span>
+                        <strong style="font-size: 14px;">${escapeHtml(user.phone)}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 8px;">
+                        <span style="color: var(--admin-text-light); font-size: 13px;">Gender</span>
+                        <strong style="font-size: 14px;">${user.gender || 'Not specified'}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 8px;">
+                        <span style="color: var(--admin-text-light); font-size: 13px;">Date of Birth</span>
+                        <strong style="font-size: 14px;">${dobFormatted}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 8px;">
+                        <span style="color: var(--admin-text-light); font-size: 13px;">City / Location</span>
+                        <strong style="font-size: 14px;">${escapeHtml(user.city) || 'Not provided'}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 8px;">
+                        <span style="color: var(--admin-text-light); font-size: 13px;">Joined Date</span>
+                        <strong style="font-size: 14px;">${joinedFormatted}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding-bottom: 4px;">
+                        <span style="color: var(--admin-text-light); font-size: 13px;">Last Login</span>
+                        <strong style="font-size: 14px;">${lastLoginFormatted}</strong>
+                    </div>
+                </div>
+
+                <div style="margin-top: 24px; display: flex; justify-content: flex-end;">
+                    <button class="btn-cancel" onclick="closeUserDetailModal()">Close</button>
+                </div>
+            `;
+
+            document.getElementById('user-detail-modal').classList.add('active');
+        }
+
+        function closeUserDetailModal() {
+            document.getElementById('user-detail-modal').classList.remove('active');
+        }
+
+        // ===== Delete User Prompt =====
+        let userDeletingId = null;
+        function deleteUserPrompt(id, name) {
+            userDeletingId = id;
+            document.getElementById('delete-listing-name').textContent = name;
+            const deleteModalEl = document.getElementById('delete-modal');
+            deleteModalEl.querySelector('.delete-modal-title').textContent = 'Delete User';
+            deleteModalEl.querySelector('.delete-modal-text').innerHTML = `Are you sure you want to delete <strong>${name}</strong>? This action cannot be undone.`;
+            
+            const confirmBtn = document.getElementById('btn-delete-confirm');
+            confirmBtn.setAttribute('onclick', 'confirmDeleteUser()');
+
+            deleteModalEl.classList.add('active');
+        }
+
+        async function confirmDeleteUser() {
+            if (!userDeletingId) return;
+            try {
+                const res = await fetch(`/api/admin/users/${userDeletingId}`, { method: 'DELETE' });
+                if (res.ok) {
+                    showToast('User permanently deleted successfully.', 'success');
+                    closeDeleteModal();
+                    fetchUsers();
+                } else {
+                    const data = await res.json();
+                    showToast(data.error || 'Failed to delete user', 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Failed to delete user', 'error');
+            }
+        }
+
+        // ===== Filters & Search Setup =====
+        function setupUserFilters() {
+            const searchInput = document.getElementById('search-users');
+            const genderSelect = document.getElementById('filter-user-gender');
+            const cityInput = document.getElementById('filter-user-city');
+            const dateStartInput = document.getElementById('filter-user-date-start');
+            const dateEndInput = document.getElementById('filter-user-date-end');
+
+            const applyFilters = () => {
+                const search = searchInput.value.toLowerCase().trim();
+                const gender = genderSelect.value;
+                const city = cityInput.value.toLowerCase().trim();
+                const start = dateStartInput.value;
+                const end = dateEndInput.value;
+
+                filteredUsers = allUsers.filter(u => {
+                    if (search && !u.fullName.toLowerCase().includes(search) && !u.email.toLowerCase().includes(search)) {
+                        return false;
+                    }
+                    if (gender && u.gender !== gender) {
+                        return false;
+                    }
+                    if (city && (!u.city || !u.city.toLowerCase().includes(city))) {
+                        return false;
+                    }
+                    if (start || end) {
+                        if (!u.createdAt) return false;
+                        const created = new Date(u.createdAt).toISOString().split('T')[0];
+                        if (start && created < start) return false;
+                        if (end && created > end) return false;
+                    }
+                    return true;
+                });
+
+                renderUsersTable();
+            };
+
+            searchInput.addEventListener('input', applyFilters);
+            genderSelect.addEventListener('change', applyFilters);
+            cityInput.addEventListener('input', applyFilters);
+            dateStartInput.addEventListener('change', applyFilters);
+            dateEndInput.addEventListener('change', applyFilters);
+        }
+
+        function resetUserFilters() {
+            document.getElementById('search-users').value = '';
+            document.getElementById('filter-user-gender').value = '';
+            document.getElementById('filter-user-city').value = '';
+            document.getElementById('filter-user-date-start').value = '';
+            document.getElementById('filter-user-date-end').value = '';
+            
+            filteredUsers = [...allUsers];
+            renderUsersTable();
         }
 
         // ===== Amenity Chips =====

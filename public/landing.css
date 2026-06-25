@@ -1,0 +1,388 @@
+/* ===== Stay-Ease Landing Page CSS ===== */
+
+:root {
+  --navy: #1a1f36;
+  --gold: #f5a623;
+  --gold-hover: #d48c16;
+  --teal: #0abf8a;
+  --teal-hover: #08a375;
+  --white: #ffffff;
+  --light-bg: #f7f8fc;
+  --gray-text: #6b7280;
+  --dark-text: #111827;
+  --border-light: rgba(0, 0, 0, 0.06);
+  --border-dark: rgba(255, 255, 255, 0.08);
+  --shadow-premium: 0 20px 40px rgba(0, 0, 0, 0.15);
+  --transition-smooth: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body, html {
+  height: 100%;
+  width: 100%;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  overflow: hidden;
+}
+
+/* Landing Container Split */
+.landing-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #1b223d 0%, #0c0f1d 100%);
+}
+
+/* Floating Particles Animated Background */
+.particle-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.3;
+  animation: particleMove 20s linear infinite;
+  z-index: 1;
+}
+
+@keyframes particleMove {
+  from { background-position: 0 0; }
+  to { background-position: 400px 400px; }
+}
+
+/* Split Panels */
+.panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 40px;
+  position: relative;
+  z-index: 2;
+  transition: var(--transition-smooth);
+  cursor: pointer;
+}
+
+/* Left Panel - Admin Portal */
+.panel-admin {
+  background: linear-gradient(135deg, rgba(26, 31, 54, 0.95) 0%, rgba(15, 18, 30, 0.95) 100%);
+  color: var(--white);
+  border-right: 1px solid var(--border-dark);
+}
+
+/* Right Panel - User Portal */
+.panel-user {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(243, 244, 246, 0.95) 100%);
+  color: var(--dark-text);
+  border-left: 1px solid var(--border-light);
+}
+
+/* Hover Zoom Effect */
+.landing-container:hover .panel {
+  opacity: 0.6;
+  filter: blur(2px);
+}
+
+.landing-container .panel:hover {
+  flex: 1.15;
+  opacity: 1;
+  filter: blur(0);
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.3);
+}
+
+/* Content Elements inside Panels */
+.panel-card {
+  max-width: 380px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: var(--transition-smooth);
+}
+
+.panel:hover .panel-card {
+  transform: scale(1.05);
+}
+
+.panel-icon {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  transition: var(--transition-smooth);
+}
+
+.panel-admin .panel-icon {
+  background: rgba(245, 166, 35, 0.1);
+  border: 2px solid var(--gold);
+}
+
+.panel-admin .panel-icon svg {
+  stroke: var(--gold);
+  width: 44px;
+  height: 44px;
+}
+
+.panel-user .panel-icon {
+  background: rgba(10, 191, 138, 0.08);
+  border: 2px solid var(--teal);
+}
+
+.panel-user .panel-icon svg {
+  stroke: var(--teal);
+  width: 44px;
+  height: 44px;
+}
+
+.panel-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.panel-admin .panel-title {
+  color: var(--white);
+  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.panel-user .panel-title {
+  color: var(--dark-text);
+}
+
+.panel-subtitle {
+  font-size: 16px;
+  margin-bottom: 36px;
+  line-height: 1.5;
+}
+
+.panel-admin .panel-subtitle {
+  color: #a5b4fc;
+}
+
+.panel-user .panel-subtitle {
+  color: var(--gray-text);
+}
+
+/* Premium Buttons */
+.panel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 36px;
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 30px;
+  transition: var(--transition-smooth);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.panel-admin .panel-btn {
+  background: var(--gold);
+  color: var(--navy);
+}
+
+.panel-admin .panel-btn:hover {
+  background: var(--gold-hover);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px rgba(245, 166, 35, 0.35);
+}
+
+.panel-user .panel-btn {
+  background: var(--teal);
+  color: var(--white);
+}
+
+.panel-user .panel-btn:hover {
+  background: var(--teal-hover);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px rgba(10, 191, 138, 0.35);
+}
+
+/* Center Brand Header Overlay */
+.brand-overlay {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  text-align: center;
+  pointer-events: none;
+}
+
+.logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo-text {
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--white);
+  letter-spacing: -1px;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(135deg, #ffffff 0%, #e5e7eb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.logo-text span {
+  color: var(--teal);
+  -webkit-text-fill-color: var(--teal);
+}
+
+.brand-tagline {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 4px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Center Divider Line & Badge */
+.center-divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  background: linear-gradient(to bottom, transparent 15%, rgba(255,255,255,0.15) 25%, rgba(255,255,255,0.15) 75%, transparent 85%);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.divider-badge {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #1f2937;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 800;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Responsive Stacking Behavior */
+@media (max-width: 768px) {
+  .landing-container {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  
+  .brand-overlay {
+    top: 24px;
+    width: 100%;
+  }
+
+  .logo-text {
+    font-size: 28px;
+  }
+
+  .brand-tagline {
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+
+  .panel {
+    width: 100%;
+    height: 50vh;
+    padding: 80px 24px 40px 24px;
+  }
+  
+  /* Stack User on top, Admin below */
+  .panel-user {
+    order: 1;
+    border-left: none;
+    border-bottom: 1px solid var(--border-light);
+  }
+  
+  .panel-admin {
+    order: 2;
+    border-right: none;
+    border-top: 1px solid var(--border-dark);
+  }
+
+  .landing-container:hover .panel {
+    opacity: 1;
+    filter: none;
+  }
+
+  .landing-container .panel:hover {
+    flex: 1;
+    box-shadow: none;
+  }
+
+  .panel:hover .panel-card {
+    transform: none;
+  }
+
+  .panel-icon {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 16px;
+  }
+
+  .panel-icon svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .panel-title {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+
+  .panel-subtitle {
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  .panel-btn {
+    padding: 12px 28px;
+    font-size: 14px;
+  }
+
+  .center-divider {
+    left: 0;
+    right: 0;
+    top: 50%;
+    bottom: auto;
+    width: 100%;
+    height: 1px;
+    transform: translateY(-50%);
+    background: linear-gradient(to right, transparent 15%, rgba(255,255,255,0.15) 25%, rgba(255,255,255,0.15) 75%, transparent 85%);
+  }
+
+  .divider-badge {
+    width: 38px;
+    height: 38px;
+    font-size: 11px;
+  }
+}

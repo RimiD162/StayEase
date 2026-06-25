@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Create a Stay-Ease account to discover hotels and rentals.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/auth.css">
+  <title>Sign Up — Stay-Ease</title>
+</head>
+<body class="auth-body user-theme">
+
+  <div class="auth-container">
+    <!-- ===== Decorative Left Panel ===== -->
+    <div class="auth-sidebar">
+      <a href="/" class="auth-sidebar-logo">
+        Stay<span>Ease</span>
+      </a>
+      <div class="auth-sidebar-content">
+        <h1 class="auth-sidebar-title">
+          Join the<br>
+          <span class="highlight">Stay-Ease Family</span>
+        </h1>
+        <p class="auth-sidebar-text">
+          Create an account to save lists, track reservations, and experience hassle-free vacation booking.
+        </p>
+      </div>
+      <div class="auth-sidebar-footer">
+        &copy; 2026 Stay-Ease. All rights reserved.
+      </div>
+    </div>
+
+    <!-- ===== Form Right Panel ===== -->
+    <div class="auth-content">
+      <div class="auth-card" id="auth-card-element" style="max-width: 540px; margin: 20px 0;">
+        <div class="auth-header">
+          <a href="/" class="auth-logo-mobile">
+            Stay<span>Ease</span>
+          </a>
+          <h2 class="auth-title">Create Account</h2>
+          <p class="auth-subtitle">Already have an account? <a href="/user/login">Login &rarr;</a></p>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="signup-progress-container">
+          <div class="signup-progress-text">
+            <span>Profile Completion</span>
+            <span id="progress-percent">0%</span>
+          </div>
+          <div class="signup-progress-bar-bg">
+            <div class="signup-progress-bar-fill" id="progress-bar-fill"></div>
+          </div>
+        </div>
+
+        <!-- Server Error Banner -->
+        <% if (typeof error !== 'undefined' && error) { %>
+          <div class="alert-banner alert-banner-error" id="server-error-banner">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <span><%= error %></span>
+          </div>
+        <% } %>
+
+        <form id="user-signup-form" class="auth-form" action="/user/signup" method="POST">
+          
+          <!-- Profile Image Selector -->
+          <div class="avatar-upload-area" onclick="document.getElementById('avatar-input-file').click()">
+            <div class="avatar-preview-box">
+              <img id="avatar-preview" class="avatar-preview-img" style="display:none;" alt="Avatar Preview">
+              <svg id="avatar-placeholder-svg" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="32" height="32">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+              </svg>
+            </div>
+            <div class="avatar-upload-text">
+              <span class="avatar-upload-title">Profile Photo (Optional)</span>
+              <span class="avatar-upload-subtitle">Click to upload JPG or PNG (Max 2MB)</span>
+            </div>
+          </div>
+          <input type="file" id="avatar-input-file" accept="image/*" style="display:none;">
+          <input type="hidden" name="avatar" id="avatar-base64">
+
+          <!-- Full Name -->
+          <div class="form-group" id="group-fullName">
+            <div class="input-icon-wrapper">
+              <div class="input-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              </div>
+              <input type="text" class="form-input" id="fullName-input" name="fullName" placeholder=" " required value="<%= typeof oldValues !== 'undefined' ? oldValues.fullName : '' %>">
+              <label class="form-label" for="fullName-input">Full Name *</label>
+              <div class="input-focus-line"></div>
+            </div>
+            <div class="error-msg">Full name is required.</div>
+          </div>
+
+          <!-- Username -->
+          <div class="form-group" id="group-username">
+            <div class="input-icon-wrapper">
+              <div class="input-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/>
+                </svg>
+              </div>
+              <input type="text" class="form-input" id="username-input" name="username" placeholder=" " required style="padding-right: 48px;" value="<%= typeof oldValues !== 'undefined' ? oldValues.username : '' %>">
+              <label class="form-label" for="username-input">Username *</label>
+              <div class="input-focus-line"></div>
+              
+              <!-- Live Username Ticks -->
+              <div class="username-status" id="username-ok">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </div>
+              <div class="username-status" id="username-taken" style="color: var(--error);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </div>
+            </div>
+            <div class="error-msg" id="username-err-msg">Username is required (lowercase, numbers, underscores only).</div>
+          </div>
+
+          <!-- Email Address -->
+          <div class="form-group" id="group-email">
+            <div class="input-icon-wrapper">
+              <div class="input-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <input type="email" class="form-input" id="email-input" name="email" placeholder=" " required value="<%= typeof oldValues !== 'undefined' ? oldValues.email : '' %>">
+              <label class="form-label" for="email-input">Email Address *</label>
+              <div class="input-focus-line"></div>
+            </div>
+            <div class="error-msg">A valid email address is required.</div>
+          </div>
+
+          <!-- Phone Number -->
+          <div class="form-group" id="group-phone">
+            <div class="input-icon-wrapper">
+              <div class="input-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                </svg>
+              </div>
+              <input type="tel" class="form-input" id="phone-input" name="phone" placeholder=" " required value="<%= typeof oldValues !== 'undefined' ? oldValues.phone : '' %>">
+              <label class="form-label" for="phone-input">Phone Number *</label>
+              <div class="input-focus-line"></div>
+            </div>
+            <div class="error-msg">Phone number is required.</div>
+          </div>
+
+          <!-- Gender Selection -->
+          <div class="form-group-custom">
+            <span class="gender-label-main">Gender Selection *</span>
+            <div class="gender-options">
+              <label class="gender-option">
+                <input type="radio" name="gender" value="Male" required <%= typeof oldValues !== 'undefined' && oldValues.gender === 'Male' ? 'checked' : '' %>> Male
+              </label>
+              <label class="gender-option">
+                <input type="radio" name="gender" value="Female" <%= typeof oldValues !== 'undefined' && oldValues.gender === 'Female' ? 'checked' : '' %>> Female
+              </label>
+              <label class="gender-option">
+                <input type="radio" name="gender" value="Other" <%= typeof oldValues !== 'undefined' && oldValues.gender === 'Other' ? 'checked' : '' %>> Other
+              </label>
+            </div>
+          </div>
+
+          <!-- Date of Birth -->
+          <div class="form-group" id="group-dob">
+            <div class="input-icon-wrapper">
+              <div class="input-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+              </div>
+              <input type="date" class="form-input" id="dob-input" name="dateOfBirth" placeholder=" " value="<%= typeof oldValues !== 'undefined' ? oldValues.dateOfBirth : '' %>">
+              <label class="form-label" for="dob-input">Date of Birth</label>
+              <div class="input-focus-line"></div>
+            </div>
+          </div>
+
+          <!-- City / Location -->
+          <div class="form-group" id="group-city">
+            <div class="input-icon-wrapper">
+              <div class="input-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <input type="text" class="form-input" id="city-input" name="city" placeholder=" " value="<%= typeof oldValues !== 'undefined' ? oldValues.city : '' %>">
+              <label class="form-label" for="city-input">City / Location</label>
+              <div class="input-focus-line"></div>
+            </div>
+          </div>
+
+          <!-- Terms Checkbox -->
+          <div class="form-group-custom">
+            <label class="terms-row" id="group-terms">
+              <input type="checkbox" id="terms-input" name="terms" required>
+              <span>I agree to the <a href="#" onclick="event.preventDefault(); alert('Terms of Service: By signing up you agree to simplify your stay with Stay-Ease.');">Terms & Conditions</a> of Stay-Ease. *</span>
+            </label>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn-auth-submit" id="submit-btn">
+            Create Account
+          </button>
+
+          <!-- Back link -->
+          <a href="/user/login" class="auth-back-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+            </svg>
+            Already have an account? Login &rarr;
+          </a>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('user-signup-form');
+    const card = document.getElementById('auth-card-element');
+    const serverError = document.getElementById('server-error-banner');
+
+    if (serverError) {
+      card.classList.add('shake-field');
+      setTimeout(() => card.classList.remove('shake-field'), 500);
+    }
+
+    // --- Base64 Photo Upload Handler ---
+    const avatarInputFile = document.getElementById('avatar-input-file');
+    const avatarBase64 = document.getElementById('avatar-base64');
+    const avatarPreview = document.getElementById('avatar-preview');
+    const avatarPlaceholderSvg = document.getElementById('avatar-placeholder-svg');
+
+    avatarInputFile.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        if (file.size > 2 * 1024 * 1024) {
+          alert('Avatar image file size must be under 2MB.');
+          avatarInputFile.value = '';
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const base64Str = evt.target.result;
+          avatarBase64.value = base64Str;
+          avatarPreview.src = base64Str;
+          avatarPreview.style.display = 'block';
+          avatarPlaceholderSvg.style.display = 'none';
+          updateProgress();
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // --- Username Live Availability Check ---
+    const usernameInput = document.getElementById('username-input');
+    const userOk = document.getElementById('username-ok');
+    const userTaken = document.getElementById('username-taken');
+    const userErrMsg = document.getElementById('username-err-msg');
+    let isUsernameAvailable = false;
+
+    usernameInput.addEventListener('blur', async function() {
+      const username = this.value.trim();
+      userOk.style.display = 'none';
+      userTaken.style.display = 'none';
+
+      if (!username) {
+        isUsernameAvailable = false;
+        return;
+      }
+
+      // Check lowercase letters, numbers, underscores only
+      const usernameRegex = /^[a-z0-9_]+$/;
+      if (!usernameRegex.test(username)) {
+        userErrMsg.textContent = 'Only lowercase letters, numbers, and underscores are allowed.';
+        this.closest('.form-group').classList.add('has-error');
+        userTaken.style.display = 'flex';
+        isUsernameAvailable = false;
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/users/check-username?username=${encodeURIComponent(username)}`);
+        const result = await response.json();
+        
+        if (result.available) {
+          userOk.style.display = 'flex';
+          this.closest('.form-group').classList.remove('has-error');
+          isUsernameAvailable = true;
+        } else {
+          userErrMsg.textContent = 'This username is already taken.';
+          this.closest('.form-group').classList.add('has-error');
+          userTaken.style.display = 'flex';
+          isUsernameAvailable = false;
+        }
+      } catch (err) {
+        console.error("Failed to check username:", err);
+      }
+    });
+
+    // --- Dynamic Form Progress Calculation ---
+    const progressFill = document.getElementById('progress-bar-fill');
+    const progressPercent = document.getElementById('progress-percent');
+
+    function updateProgress() {
+      const fields = [
+        document.getElementById('fullName-input'),
+        usernameInput,
+        document.getElementById('email-input'),
+        document.getElementById('phone-input'),
+        document.getElementById('dob-input'),
+        document.getElementById('city-input'),
+        avatarBase64
+      ];
+
+      let filledCount = 0;
+
+      // 1. Regular inputs
+      fields.forEach(f => {
+        if (f && f.value.trim()) {
+          filledCount++;
+        }
+      });
+
+      // 2. Radios (gender)
+      const genderRadios = document.querySelectorAll('input[name="gender"]:checked');
+      if (genderRadios.length > 0) {
+        filledCount++;
+      }
+
+      // 3. Terms checkbox
+      const termsBox = document.getElementById('terms-input');
+      if (termsBox && termsBox.checked) {
+        filledCount++;
+      }
+
+      const totalFields = fields.length + 2; // fields array + gender + terms
+      const percentage = Math.round((filledCount / totalFields) * 100);
+
+      progressFill.style.width = percentage + '%';
+      progressPercent.textContent = percentage + '%';
+    }
+
+    // Attach listeners for progress updates
+    document.querySelectorAll('.form-input').forEach(i => {
+      i.addEventListener('input', updateProgress);
+    });
+    document.querySelectorAll('input[type="radio"]').forEach(r => {
+      r.addEventListener('change', updateProgress);
+    });
+    document.getElementById('terms-input').addEventListener('change', updateProgress);
+
+    // Initial run
+    updateProgress();
+
+    // --- Client-side Validations on Submit ---
+    form.addEventListener('submit', function(e) {
+      let hasError = false;
+
+      // Validate Full Name
+      const fullNameVal = document.getElementById('fullName-input').value.trim();
+      if (!fullNameVal) {
+        document.getElementById('group-fullName').classList.add('has-error');
+        hasError = true;
+      }
+
+      // Validate Username format
+      const usernameVal = usernameInput.value.trim();
+      const usernameRegex = /^[a-z0-9_]+$/;
+      if (!usernameVal || !usernameRegex.test(usernameVal)) {
+        userErrMsg.textContent = 'Only lowercase letters, numbers, and underscores are allowed.';
+        document.getElementById('group-username').classList.add('has-error');
+        hasError = true;
+      } else if (!isUsernameAvailable) {
+        // If they bypass blur check
+        userErrMsg.textContent = 'This username is taken or check pending.';
+        document.getElementById('group-username').classList.add('has-error');
+        hasError = true;
+      }
+
+      // Validate Email
+      const emailVal = document.getElementById('email-input').value.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailVal || !emailRegex.test(emailVal)) {
+        document.getElementById('group-email').classList.add('has-error');
+        hasError = true;
+      }
+
+      // Validate Phone
+      const phoneVal = document.getElementById('phone-input').value.trim();
+      if (!phoneVal) {
+        document.getElementById('group-phone').classList.add('has-error');
+        hasError = true;
+      }
+
+      // Validate Terms Checkbox
+      const termsBox = document.getElementById('terms-input');
+      if (!termsBox.checked) {
+        hasError = true;
+      }
+
+      if (hasError) {
+        e.preventDefault();
+        card.classList.add('shake-field');
+        setTimeout(() => card.classList.remove('shake-field'), 500);
+      }
+    });
+
+    // Remove errors on input
+    document.querySelectorAll('.form-input').forEach(input => {
+      input.addEventListener('input', function() {
+        this.closest('.form-group').classList.remove('has-error');
+      });
+    });
+  </script>
+</body>
+</html>
