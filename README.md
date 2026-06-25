@@ -31,9 +31,9 @@ Welcome to **Stayandaman**, a modern, premium travel and tourism web application
 
 - **Frontend**: HTML5, EJS templates, and custom modern CSS with glassmorphism, HSL tailored variables, and micro-animations.
 - **Backend**: Node.js and Express.
-- **Database Layer (`dbService.js`)**: A custom-built, resilient data access layer with dual-mode storage:
+- **Database Layer (`src/dbService.js`)**: A custom-built, resilient data access layer with dual-mode storage:
   - **Mongoose / MongoDB Mode**: Standard mode that stores documents in MongoDB database (`stayandaman`).
-  - **Auto-Fallback JSON Database (`db.json`)**: If the database URL contains the placeholder (`xxxxx`) or the connection fails/times out, the application automatically flags and switches to a local file-based JSON database. This ensures the app is 100% testable out-of-the-box without manual database configuration.
+  - **Auto-Fallback JSON Database (`src/db.json`)**: If the database URL contains the placeholder (`xxxxx`) or the connection fails/times out, the application automatically flags and switches to a local file-based JSON database. This ensures the app is 100% testable out-of-the-box without manual database configuration.
 - **Image Processing**: Base64 data URIs for listing images and admin avatars, enabling inline previews and database persistence.
 - **Authentication**: Session-based auth via `express-session`.
 
@@ -61,7 +61,7 @@ Welcome to **Stayandaman**, a modern, premium travel and tourism web application
    ```env
    mongodb_url = mongodb+srv://<username>:<password>@cluster0.yourcluster.mongodb.net/
    ```
-   *Note: If left blank or left with the placeholder `xxxxx`, the application will use the local `db.json` database automatically.*
+   *Note: If left blank or left with the placeholder `xxxxx`, the application will use the local `src/db.json` database automatically.*
 
 ### Running the Application
 
@@ -87,6 +87,9 @@ Stayandaman/
 ├── public/
 │   ├── admin.css         # Main stylesheet for the Admin Dashboard
 │   └── (other css/assets)
+├── src/
+│   ├── dbService.js      # Hybrid data controller with MongoDB / JSON fallback
+│   └── db.json           # Auto-generated JSON database (used in fallback mode)
 ├── views/
 │   ├── adminDashboard.ejs# Main dashboard EJS template (Single-page app)
 │   ├── adminLogin.ejs    # Login page template
@@ -94,8 +97,6 @@ Stayandaman/
 │   ├── Lodges.ejs        # Public lodge grid page
 │   ├── Rentals.ejs       # Public rental grid page
 │   └── home.ejs          # Home landing page template
-├── dbService.js          # Hybrid data controller with MongoDB / JSON fallback
-├── db.json               # Auto-generated JSON database (used in fallback mode)
 ├── index.js              # Express app initialization, routing, and server config
 ├── package.json          # Dependency definition
 └── README.md             # This file

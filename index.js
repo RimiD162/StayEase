@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 import session from "express-session";
 import Listing from "./models/Listing.js";
 import Admin from "./models/Admin.js";
-import { dbService } from "./dbService.js";
+import { dbService } from "./src/dbService.js";
 import User from "./models/User.js";
 import isUserLoggedIn from "./middleware/isUserLoggedIn.js";
 import isAdminLoggedIn from "./middleware/isAdminLoggedIn.js";
@@ -14,7 +14,7 @@ import isAdminLoggedIn from "./middleware/isAdminLoggedIn.js";
 dotenv.config();
 
 const app = express();
-const port = 8080;
+const port = process.env.PORT || 5050;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

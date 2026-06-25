@@ -1,9 +1,9 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import Listing from "./models/Listing.js";
-import Admin from "./models/Admin.js";
-import User from "./models/User.js";
+import Listing from "../models/Listing.js";
+import Admin from "../models/Admin.js";
+import User from "../models/User.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
