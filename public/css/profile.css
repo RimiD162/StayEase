@@ -1,0 +1,321 @@
+/* ═══════════════════════════════════════════════════
+   STAY-EASE — User Profile Page Styles
+   Two-column layout: sidebar card + content area
+   ═══════════════════════════════════════════════════ */
+
+/* ===== Profile Page ===== */
+.profile-page {
+  background: var(--bg-light);
+  min-height: 100vh;
+}
+
+.profile-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: var(--space-8);
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: var(--space-6);
+  animation: fadeInUp 0.5s ease-out;
+}
+
+/* ===== Left Sidebar Card ===== */
+.profile-sidebar {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  height: fit-content;
+  position: sticky;
+  top: 84px;
+}
+
+.profile-sidebar-header {
+  background: linear-gradient(135deg, var(--primary), #2d3561);
+  padding: var(--space-8) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.profile-avatar-wrap {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  border-radius: var(--radius-full);
+  border: 3px solid var(--secondary);
+  overflow: hidden;
+  margin-bottom: var(--space-4);
+  background: #fff;
+}
+
+.profile-avatar-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--accent), #089e72);
+  font-size: 36px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.profile-sidebar-name {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: var(--space-1);
+}
+
+.profile-sidebar-username {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: var(--space-2);
+}
+
+.profile-sidebar-email {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.profile-sidebar-info {
+  padding: var(--space-5) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.profile-info-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: 14px;
+  color: var(--text-mid);
+}
+
+.profile-info-item svg {
+  width: 18px;
+  height: 18px;
+  color: var(--text-soft);
+  flex-shrink: 0;
+}
+
+.profile-sidebar-actions {
+  padding: 0 var(--space-6) var(--space-6);
+}
+
+.profile-sidebar-actions form {
+  margin: 0;
+}
+
+/* ===== Right Content ===== */
+.profile-content {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.profile-content-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-6);
+  border-bottom: 1px solid var(--border);
+}
+
+.profile-content-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+/* ===== Profile Form ===== */
+.profile-form {
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.profile-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+}
+
+.profile-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.profile-form-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-mid);
+}
+
+.profile-form-input {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-light);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  color: var(--text-dark);
+  transition: var(--transition);
+}
+
+.profile-form-input:focus {
+  border-color: var(--accent);
+  background: var(--bg-card);
+  box-shadow: 0 0 0 3px rgba(10, 191, 138, 0.1);
+}
+
+.profile-form-input[readonly] {
+  background: var(--bg-light);
+  color: var(--text-soft);
+  cursor: default;
+}
+
+.profile-form-input[readonly]:focus {
+  border-color: var(--border);
+  box-shadow: none;
+}
+
+/* Gender Select */
+.profile-gender-pills {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.profile-gender-pill {
+  flex: 1;
+  text-align: center;
+}
+
+.profile-gender-pill input {
+  display: none;
+}
+
+.profile-gender-pill label {
+  display: block;
+  padding: var(--space-3) var(--space-2);
+  background: var(--bg-light);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-mid);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.profile-gender-pill input:checked + label {
+  border-color: var(--accent);
+  background: rgba(10, 191, 138, 0.08);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Avatar Upload */
+.profile-avatar-upload {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--bg-light);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.profile-avatar-upload:hover {
+  border-color: var(--accent);
+}
+
+.profile-avatar-upload-preview {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
+}
+
+.profile-avatar-upload-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-avatar-upload-preview svg {
+  width: 24px;
+  height: 24px;
+  color: var(--text-soft);
+}
+
+/* Form Actions */
+.profile-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+/* Success Alert */
+.profile-alert-success {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--success-light);
+  border: 1px solid rgba(46, 204, 113, 0.15);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a9d55;
+}
+
+.profile-alert-success svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .profile-container {
+    grid-template-columns: 1fr;
+    padding: var(--space-4);
+  }
+
+  .profile-sidebar {
+    position: static;
+  }
+
+  .profile-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-gender-pills {
+    flex-direction: column;
+  }
+}

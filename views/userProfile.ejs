@@ -1,677 +1,228 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="View and update your Stayandaman traveler profile.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/home.css">
-    <title>My Profile — Stayandaman</title>
-    <style>
-        /* Profile Layout Styles */
-        body {
-            background-color: #0f121d;
-            color: #ffffff;
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        .profile-container {
-            max-width: 1000px;
-            margin: 120px auto 60px;
-            padding: 0 24px;
-            display: flex;
-            gap: 32px;
-        }
-
-        @media (max-width: 768px) {
-            .profile-container {
-                flex-direction: column;
-                margin-top: 100px;
-            }
-        }
-
-        /* Profile Left sidebar card */
-        .profile-sidebar-card {
-            flex: 0.8;
-            background: #1a1f36;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 32px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            height: fit-content;
-        }
-
-        .profile-avatar-large-container {
-            width: 130px;
-            height: 130px;
-            border-radius: 50%;
-            border: 3px solid rgba(245, 166, 35, 0.3);
-            background: #2e3556;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
-            margin-bottom: 20px;
-            cursor: pointer;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .profile-avatar-large-container:hover {
-            border-color: #f5a623;
-            transform: scale(1.02);
-        }
-
-        .profile-avatar-large-container:hover .avatar-overlay {
-            opacity: 1;
-        }
-
-        .profile-avatar-large {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .profile-avatar-placeholder {
-            font-size: 48px;
-            font-weight: 700;
-            color: #f5a623;
-        }
-
-        .avatar-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            font-size: 11px;
-            font-weight: 600;
-            color: #ffffff;
-            gap: 4px;
-        }
-
-        .avatar-overlay svg {
-            width: 20px;
-            height: 20px;
-            stroke: #f5a623;
-        }
-
-        .profile-name-title {
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-
-        .profile-email-subtitle {
-            font-size: 14px;
-            color: #8c96c1;
-            margin-bottom: 24px;
-        }
-
-        .profile-meta-details {
-            width: 100%;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            text-align: left;
-        }
-
-        .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 13px;
-            color: #8c96c1;
-        }
-
-        .meta-item svg {
-            width: 16px;
-            height: 16px;
-            stroke: #f5a623;
-            flex-shrink: 0;
-        }
-
-        /* Profile Right Content Form */
-        .profile-content-card {
-            flex: 1.2;
-            background: #1a1f36;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 40px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        @media (max-width: 480px) {
-            .profile-content-card {
-                padding: 24px;
-            }
-        }
-
-        .profile-section-header {
-            margin-bottom: 32px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 16px;
-        }
-
-        .profile-section-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: #ffffff;
-        }
-
-        .profile-form {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        .form-grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        @media (max-width: 600px) {
-            .form-grid-2 {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .field-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .field-label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #8c96c1;
-        }
-
-        .field-input {
-            width: 100%;
-            padding: 14px 16px;
-            background: #2e3556;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            font-size: 14px;
-            color: #ffffff;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        .field-input:focus {
-            border-color: #f5a623;
-            box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.1);
-            background: rgba(46, 53, 86, 0.6);
-        }
-
-        .field-input:disabled {
-            background: rgba(26, 31, 54, 0.6);
-            color: #6d78a8;
-            cursor: not-allowed;
-            border-color: rgba(255, 255, 255, 0.05);
-        }
-
-        /* Gender selector inputs */
-        .gender-radio-options {
-            display: flex;
-            gap: 24px;
-            padding: 12px 0;
-        }
-
-        .gender-option-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            color: #ffffff;
-        }
-
-        .gender-option-label input[type="radio"] {
-            accent-color: #f5a623;
-            width: 16px;
-            height: 16px;
-        }
-
-        /* Buttons styling */
-        .profile-btn-row {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 16px;
-        }
-
-        .btn-save-profile {
-            padding: 14px 28px;
-            background: #f5a623;
-            color: #1a1f36;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(245, 166, 35, 0.2);
-        }
-
-        .btn-save-profile:hover {
-            background: #d48c16;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(245, 166, 35, 0.3);
-        }
-
-        /* Form validation alerts */
-        .alert-toast {
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 13px;
-            margin-bottom: 24px;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-        }
-
-        .alert-toast-success {
-            background: rgba(34, 197, 94, 0.1);
-            border: 1px solid rgba(34, 197, 94, 0.2);
-            color: #4ade80;
-        }
-
-        .alert-toast-error {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            color: #f87171;
-        }
-
-        .alert-toast svg {
-            width: 18px;
-            height: 18px;
-            flex-shrink: 0;
-            margin-top: 1px;
-        }
-
-        /* User Dropdown styling overrides for home.css integration */
-        .navbar {
-            background: #121526 !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-        }
-
-        /* User Dropdown styles */
-        .user-dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .user-dropdown-toggle {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            padding: 6px 12px;
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .user-dropdown-toggle:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .nav-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .nav-avatar-placeholder {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: #f5a623;
-            color: #1a1f36;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-        }
-
-        .nav-username {
-            font-weight: 500;
-            font-size: 14px;
-            color: #ffffff;
-        }
-
-        .dropdown-chevron {
-            transition: transform 0.3s ease;
-        }
-
-        .user-dropdown-menu {
-            position: absolute;
-            right: 0;
-            top: calc(100% + 8px);
-            background: #1a1f36;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            width: 160px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            display: none;
-            z-index: 1000;
-            overflow: hidden;
-            animation: fadeIn 0.2s ease;
-        }
-
-        .user-dropdown-menu.show {
-            display: block;
-        }
-
-        .dropdown-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 16px;
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            font-size: 14px;
-            background: transparent;
-            border: none;
-            width: 100%;
-            text-align: left;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .dropdown-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: #f5a623;
-        }
-
-        .btn-logout-submit {
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 0;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Your Stay-Ease profile — manage your personal information and account settings.">
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/home.css">
+  <link rel="stylesheet" href="/css/profile.css">
+  <title>My Profile — Stay-Ease</title>
 </head>
 <body>
 
-    <!-- ===== Navbar ===== -->
-    <nav class="navbar scrolled" id="navbar">
-        <div class="nav-container">
-            <a href="/home" class="nav-logo" id="nav-logo">
-                <span class="logo-text">Stay<span class="logo-accent">andaman</span></span>
-            </a>
+  <!-- ===== Navbar ===== -->
+  <nav class="navbar" id="main-navbar">
+    <a href="/home" class="navbar-logo">Stay<span>Ease</span></a>
+    <div class="navbar-links">
+      <a href="/home" class="navbar-link">Home</a>
+      <a href="/home/hotel" class="navbar-link">Hotels</a>
+      <a href="/home/lodges" class="navbar-link">Lodges</a>
+      <a href="/home/rentals" class="navbar-link">Rentals</a>
+    </div>
+    <% if (user) { %>
+    <div class="navbar-user" id="navbar-user" onclick="toggleDropdown()">
+      <div class="navbar-avatar">
+        <% if (user.avatar) { %><img src="<%= user.avatar %>" alt=""><% } else { %><%= user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U' %><% } %>
+      </div>
+      <span class="navbar-username"><%= user.fullName ? user.fullName.split(' ')[0] : 'User' %></span>
+      <svg class="navbar-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      <div class="navbar-dropdown" id="navbar-dropdown">
+        <a href="/profile" class="navbar-dropdown-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>My Profile</a>
+        <div class="navbar-dropdown-divider"></div>
+        <form action="/user/logout" method="POST" style="margin:0;"><button type="submit" class="navbar-dropdown-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout</button></form>
+      </div>
+    </div>
+    <% } %>
+    <button class="navbar-toggle" onclick="document.querySelector('.navbar-links').classList.toggle('show-mobile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+  </nav>
 
-            <div class="nav-links" id="nav-links">
-                <a href="/home" class="nav-link" id="nav-home">Home</a>
-                <a href="/home/hotel" class="nav-link" id="nav-hotels">Hotels</a>
-                <a href="/home/Rentals" class="nav-link" id="nav-rentals">Rentals</a>
-                <a href="/home/Lodges" class="nav-link" id="nav-lodges">Lodges</a>
-            </div>
+  <div class="profile-page">
+    <div class="profile-container">
 
-            <div class="nav-actions">
-                <% if (user) { %>
-                    <div class="user-dropdown" id="user-dropdown">
-                        <div class="user-dropdown-toggle" id="user-dropdown-toggle">
-                            <% if (user.avatar) { %>
-                                <img src="<%= user.avatar %>" alt="<%= user.fullName %>" class="nav-avatar" id="nav-avatar-img">
-                            <% } else { %>
-                                <div class="nav-avatar-placeholder" id="nav-avatar-placeholder-letter"><%= user.fullName.charAt(0).toUpperCase() %></div>
-                            <% } %>
-                            <span class="nav-username" id="nav-avatar-username"><%= user.fullName %></span>
-                            <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>
-                        </div>
-                        <div class="user-dropdown-menu" id="user-dropdown-menu">
-                            <a href="/profile" class="dropdown-item">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                                My Profile
-                            </a>
-                            <form action="/user/logout" method="POST" style="margin: 0;">
-                                <button type="submit" class="dropdown-item btn-logout-submit">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                                    Logout
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                <% } else { %>
-                    <button class="btn-ghost" onclick="location.href='/login'">Log In</button>
-                    <button class="btn-primary-sm" onclick="location.href='/signup'">Get Started</button>
-                <% } %>
-            </div>
-
-            <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation">
-                <span></span><span></span><span></span>
-            </button>
-        </div>
-    </nav>
-
-    <!-- ===== Profile Main Section ===== -->
-    <main class="profile-container">
-        <!-- Sidebar Card -->
-        <div class="profile-sidebar-card">
-            <div class="profile-avatar-large-container" onclick="document.getElementById('profile-avatar-input').click()">
-                <% if (user.avatar) { %>
-                    <img src="<%= user.avatar %>" alt="Avatar" class="profile-avatar-large" id="profile-avatar-large-img">
-                <% } else { %>
-                    <div class="profile-avatar-placeholder" id="profile-avatar-large-placeholder-letter"><%= user.fullName.charAt(0).toUpperCase() %></div>
-                    <img src="" alt="Avatar" class="profile-avatar-large" id="profile-avatar-large-img" style="display:none">
-                <% } %>
-                <div class="avatar-overlay">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                    Change Photo
-                </div>
-            </div>
-            <input type="file" id="profile-avatar-input" accept="image/*" style="display:none">
-
-            <h2 class="profile-name-title" id="profile-card-name"><%= user.fullName %></h2>
-            <p class="profile-email-subtitle"><%= user.email %></p>
-
-            <div class="profile-meta-details">
-                <div class="meta-item">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <span id="profile-card-city"><%= profileDetails.city || 'Location not set' %></span>
-                </div>
-                <div class="meta-item">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                    <span>Member since: <%= new Date(profileDetails.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) %></span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Form Edit Card -->
-        <div class="profile-content-card">
-            <div class="profile-section-header">
-                <h3 class="profile-section-title">Personal Details</h3>
-            </div>
-
-            <!-- Toast Messages -->
-            <% if (success) { %>
-                <div class="alert-toast alert-toast-success">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                    <span><%= success %></span>
-                </div>
+      <!-- ===== Left Sidebar ===== -->
+      <aside class="profile-sidebar">
+        <div class="profile-sidebar-header">
+          <div class="profile-avatar-wrap">
+            <% if (profileDetails.avatar) { %>
+              <img src="<%= profileDetails.avatar %>" alt="<%= profileDetails.fullName %>">
+            <% } else { %>
+              <div class="profile-avatar-placeholder">
+                <%= profileDetails.fullName ? profileDetails.fullName.charAt(0).toUpperCase() : 'U' %>
+              </div>
             <% } %>
-            <div class="alert-toast alert-toast-error" id="client-error-alert" style="display:none">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                <span id="client-error-text">Please resolve the form errors.</span>
-            </div>
-
-            <form id="profile-form" class="profile-form" action="/profile" method="POST">
-                <input type="hidden" name="avatar" id="profile-avatar-base64" value="<%= user.avatar || '' %>">
-
-                <div class="form-grid-2">
-                    <!-- Full Name -->
-                    <div class="field-group">
-                        <label class="field-label" for="fullname-field">Full Name *</label>
-                        <input type="text" class="field-input" id="fullname-field" name="fullName" value="<%= user.fullName %>" required>
-                    </div>
-
-                    <!-- Email Address (Locked) -->
-                    <div class="field-group">
-                        <label class="field-label" for="email-field">Email Address (Locked)</label>
-                        <input type="email" class="field-input" id="email-field" value="<%= user.email %>" disabled>
-                    </div>
-
-                    <!-- Phone Number -->
-                    <div class="field-group">
-                        <label class="field-label" for="phone-field">Phone Number *</label>
-                        <input type="tel" class="field-input" id="phone-field" name="phone" value="<%= user.phone %>" required>
-                    </div>
-
-                    <!-- City / Location -->
-                    <div class="field-group">
-                        <label class="field-label" for="city-field">City / Location</label>
-                        <input type="text" class="field-input" id="city-field" name="city" value="<%= profileDetails.city || '' %>" placeholder="e.g. Shimla, India">
-                    </div>
-
-                    <!-- Date of Birth -->
-                    <div class="field-group">
-                        <label class="field-label" for="dob-field">Date of Birth</label>
-                        <input type="date" class="field-input" id="dob-field" name="dateOfBirth" value="<%= profileDetails.dateOfBirth ? new Date(profileDetails.dateOfBirth).toISOString().split('T')[0] : '' %>">
-                    </div>
-
-                    <!-- Gender Selection -->
-                    <div class="field-group">
-                        <span class="field-label">Gender</span>
-                        <div class="gender-radio-options">
-                            <label class="gender-option-label">
-                                <input type="radio" name="gender" value="Male" <%= profileDetails.gender === 'Male' ? 'checked' : '' %>> Male
-                            </label>
-                            <label class="gender-option-label">
-                                <input type="radio" name="gender" value="Female" <%= profileDetails.gender === 'Female' ? 'checked' : '' %>> Female
-                            </label>
-                            <label class="gender-option-label">
-                                <input type="radio" name="gender" value="Other" <%= profileDetails.gender === 'Other' ? 'checked' : '' %>> Other
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="profile-btn-row">
-                    <button type="submit" class="btn-save-profile">Save Changes</button>
-                </div>
-            </form>
+          </div>
+          <h2 class="profile-sidebar-name"><%= profileDetails.fullName || 'User' %></h2>
+          <p class="profile-sidebar-username">@<%= profileDetails.username || '' %></p>
+          <p class="profile-sidebar-email"><%= profileDetails.email || '' %></p>
         </div>
-    </main>
 
-    <!-- ===== Scripts ===== -->
-    <script>
-        // Toggle User Dropdown in Navbar
-        const dropdownToggle = document.getElementById('user-dropdown-toggle');
-        const dropdownMenu = document.getElementById('user-dropdown-menu');
-        if (dropdownToggle && dropdownMenu) {
-            dropdownToggle.addEventListener('click', (e) => {
-                e.stopPropagation();
-                dropdownMenu.classList.toggle('show');
-            });
-            document.addEventListener('click', () => {
-                dropdownMenu.classList.remove('show');
-            });
-        }
+        <div class="profile-sidebar-info">
+          <% if (profileDetails.phone) { %>
+          <div class="profile-info-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <%= profileDetails.phone %>
+          </div>
+          <% } %>
+          <% if (profileDetails.city) { %>
+          <div class="profile-info-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <%= profileDetails.city %>
+          </div>
+          <% } %>
+          <% if (profileDetails.gender) { %>
+          <div class="profile-info-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <%= profileDetails.gender %>
+          </div>
+          <% } %>
+          <div class="profile-info-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Joined <%= profileDetails.createdAt ? new Date(profileDetails.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' }) : 'Unknown' %>
+          </div>
+        </div>
 
-        // Mobile Nav Menu Toggle
-        const mobileToggle = document.getElementById('mobile-toggle');
-        const navLinks = document.getElementById('nav-links');
-        if (mobileToggle && navLinks) {
-            mobileToggle.addEventListener('click', () => {
-                mobileToggle.classList.toggle('active');
-                navLinks.classList.toggle('open');
-            });
-        }
+        <div class="profile-sidebar-actions">
+          <form action="/user/logout" method="POST">
+            <button type="submit" class="btn btn-outline btn-block btn-sm">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Logout
+            </button>
+          </form>
+        </div>
+      </aside>
 
-        // Client-side base64 photo upload
-        const avatarInput = document.getElementById('profile-avatar-input');
-        const base64Input = document.getElementById('profile-avatar-base64');
-        const largeImg = document.getElementById('profile-avatar-large-img');
-        const largeLetter = document.getElementById('profile-avatar-large-placeholder-letter');
-        const navImg = document.getElementById('nav-avatar-img');
-        const navLetter = document.getElementById('nav-avatar-placeholder-letter');
+      <!-- ===== Right Content ===== -->
+      <section class="profile-content">
+        <div class="profile-content-header">
+          <h2 class="profile-content-title">Personal Information</h2>
+        </div>
 
-        avatarInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                if (file.size > 2 * 1024 * 1024) {
-                    alert('Profile photo size exceeds 2MB.');
-                    avatarInput.value = '';
-                    return;
-                }
-                const reader = new FileReader();
-                reader.onload = function(evt) {
-                    const base64String = evt.target.result;
-                    base64Input.value = base64String;
+        <form class="profile-form" action="/profile" method="POST">
+          <input type="hidden" name="avatar" id="profile-avatar-data" value="<%= profileDetails.avatar || '' %>">
 
-                    // Update local large preview
-                    largeImg.src = base64String;
-                    largeImg.style.display = 'block';
-                    if (largeLetter) largeLetter.style.display = 'none';
+          <% if (typeof success !== 'undefined' && success) { %>
+          <div class="profile-alert-success">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <%= success %>
+          </div>
+          <% } %>
 
-                    // Update navbar thumbnail preview
-                    if (navImg) {
-                        navImg.src = base64String;
-                    } else if (navLetter) {
-                        // Dynamically swap letter placeholder to image
-                        const container = document.getElementById('user-dropdown-toggle');
-                        const img = document.createElement('img');
-                        img.src = base64String;
-                        img.alt = "Avatar";
-                        img.className = "nav-avatar";
-                        img.id = "nav-avatar-img";
-                        container.replaceChild(img, navLetter);
-                    }
-                };
-                reader.readAsDataURL(file);
-            }
+          <!-- Avatar Upload -->
+          <div class="profile-avatar-upload" id="profile-avatar-zone" onclick="document.getElementById('profile-avatar-file').click()">
+            <div class="profile-avatar-upload-preview">
+              <% if (profileDetails.avatar) { %>
+              <img id="profile-avatar-preview" src="<%= profileDetails.avatar %>" alt="Avatar">
+              <% } else { %>
+              <svg id="profile-avatar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <img id="profile-avatar-preview" style="display:none;" alt="Avatar">
+              <% } %>
+            </div>
+            <div>
+              <div style="font-size:14px;font-weight:600;color:var(--text-dark);">Update Profile Photo</div>
+              <div style="font-size:12px;color:var(--text-soft);">Click to upload (Max 2MB)</div>
+            </div>
+          </div>
+          <input type="file" id="profile-avatar-file" accept="image/*" style="display:none;">
+
+          <!-- Row: Full Name, Phone -->
+          <div class="profile-form-row">
+            <div class="profile-form-group">
+              <label class="profile-form-label">Full Name</label>
+              <input type="text" class="profile-form-input" name="fullName" value="<%= profileDetails.fullName || '' %>" required>
+            </div>
+            <div class="profile-form-group">
+              <label class="profile-form-label">Phone</label>
+              <input type="tel" class="profile-form-input" name="phone" value="<%= profileDetails.phone || '' %>" required>
+            </div>
+          </div>
+
+          <!-- Row: Username (readonly), Email (readonly) -->
+          <div class="profile-form-row">
+            <div class="profile-form-group">
+              <label class="profile-form-label">Username</label>
+              <input type="text" class="profile-form-input" value="<%= profileDetails.username || '' %>" readonly>
+            </div>
+            <div class="profile-form-group">
+              <label class="profile-form-label">Email</label>
+              <input type="email" class="profile-form-input" value="<%= profileDetails.email || '' %>" readonly>
+            </div>
+          </div>
+
+          <!-- Row: Gender, Date of Birth -->
+          <div class="profile-form-row">
+            <div class="profile-form-group">
+              <label class="profile-form-label">Gender</label>
+              <div class="profile-gender-pills">
+                <div class="profile-gender-pill">
+                  <input type="radio" id="pg-male" name="gender" value="Male" <%= profileDetails.gender === 'Male' ? 'checked' : '' %>>
+                  <label for="pg-male">Male</label>
+                </div>
+                <div class="profile-gender-pill">
+                  <input type="radio" id="pg-female" name="gender" value="Female" <%= profileDetails.gender === 'Female' ? 'checked' : '' %>>
+                  <label for="pg-female">Female</label>
+                </div>
+                <div class="profile-gender-pill">
+                  <input type="radio" id="pg-other" name="gender" value="Other" <%= profileDetails.gender === 'Other' ? 'checked' : '' %>>
+                  <label for="pg-other">Other</label>
+                </div>
+              </div>
+            </div>
+            <div class="profile-form-group">
+              <label class="profile-form-label">Date of Birth</label>
+              <input type="date" class="profile-form-input" name="dateOfBirth" value="<%= profileDetails.dateOfBirth ? new Date(profileDetails.dateOfBirth).toISOString().split('T')[0] : '' %>">
+            </div>
+          </div>
+
+          <!-- City -->
+          <div class="profile-form-group">
+            <label class="profile-form-label">City</label>
+            <input type="text" class="profile-form-input" name="city" value="<%= profileDetails.city || '' %>">
+          </div>
+
+          <div class="profile-form-actions">
+            <a href="/home" class="btn btn-outline btn-sm">Cancel</a>
+            <button type="submit" class="btn btn-teal btn-sm">Save Changes</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('scroll',()=>{document.getElementById('main-navbar').classList.toggle('scrolled',window.scrollY>10);});
+    function toggleDropdown(){const u=document.getElementById('navbar-user'),d=document.getElementById('navbar-dropdown');if(u&&d){u.classList.toggle('open');d.classList.toggle('show');}}
+    document.addEventListener('click',(e)=>{const u=document.getElementById('navbar-user');if(u&&!u.contains(e.target)){u.classList.remove('open');const d=document.getElementById('navbar-dropdown');if(d)d.classList.remove('show');}});
+
+    // Avatar upload
+    document.getElementById('profile-avatar-file')?.addEventListener('change', function() {
+      const file = this.files[0];
+      if (!file || file.size > 2*1024*1024 || !file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const preview = document.getElementById('profile-avatar-preview');
+        const icon = document.getElementById('profile-avatar-icon');
+        if (preview) { preview.src = e.target.result; preview.style.display = 'block'; }
+        if (icon) icon.style.display = 'none';
+        document.getElementById('profile-avatar-data').value = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  </script>
+  
+  <script>
+    // Lazy load fade-in
+    document.querySelectorAll('img').forEach(img => {
+      if (img.complete) {
+        img.classList.add('loaded');
+      } else {
+        img.addEventListener('load', () => img.classList.add('loaded'));
+        img.addEventListener('error', () => {
+          img.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80&fit=crop';
+          img.classList.add('loaded');
         });
-
-        // Form Validation on Submit
-        const form = document.getElementById('profile-form');
-        const clientErrorAlert = document.getElementById('client-error-alert');
-        const clientErrorText = document.getElementById('client-error-text');
-
-        form.addEventListener('submit', function(e) {
-            let errorMsg = '';
-
-            const name = document.getElementById('fullname-field').value.trim();
-            const phone = document.getElementById('phone-field').value.trim();
-
-            if (!name) {
-                errorMsg = 'Full name is required.';
-            } else if (!phone) {
-                errorMsg = 'Phone number is required.';
-            }
-
-            if (errorMsg) {
-                e.preventDefault();
-                clientErrorText.textContent = errorMsg;
-                clientErrorAlert.style.display = 'flex';
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            } else {
-                clientErrorAlert.style.display = 'none';
-            }
-        });
-    </script>
+      }
+    });
+  </script>
 </body>
 </html>

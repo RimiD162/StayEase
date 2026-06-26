@@ -3,167 +3,104 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Stay-Ease Admin Access Portal.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/auth.css">
-  <title>Admin Login — Stay-Ease</title>
+  <meta name="description" content="Admin login — Stay-Ease administration portal. Restricted access for authorized personnel.">
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/auth.css">
+  <title>Admin Sign In — Stay-Ease</title>
 </head>
-<body class="auth-body admin-theme">
+<body class="admin-auth-body" style="background-image: linear-gradient(135deg,rgba(26,31,54,0.96),rgba(26,31,54,0.92)), url('https://images.unsplash.com/photo-1590490360182-c33d57733427?w=1400&q=80&fit=crop'); background-size: cover; background-attachment: fixed;">
 
-  <div class="auth-container">
-    <!-- ===== Decorative Left Panel ===== -->
-    <div class="auth-sidebar">
-      <a href="/" class="auth-sidebar-logo">
-        Stay<span>Ease</span>
-      </a>
-      <div class="auth-sidebar-content">
-        <h1 class="auth-sidebar-title">
-          Admin Portal<br>
-          <span class="highlight">Control & Manage</span>
-        </h1>
-        <p class="auth-sidebar-text">
-          Sign in using your administrator credentials to manage listings, inspect user registration records, and modify catalog inventories.
-        </p>
-      </div>
-      <div class="auth-sidebar-footer">
-        &copy; 2026 Stay-Ease. Admin System.
-      </div>
+  <div class="admin-auth-card">
+
+    <!-- Icon + Badge -->
+    <div class="admin-auth-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        <rect x="9" y="9" width="6" height="5" rx="1"/>
+        <path d="M12 9V7"/>
+      </svg>
     </div>
+    <div class="admin-auth-badge"><span>Admin Portal</span></div>
 
-    <!-- ===== Form Right Panel ===== -->
-    <div class="auth-content">
-      <div class="auth-card" id="auth-card-element">
-        <div class="auth-header">
-          <a href="/" class="auth-logo-mobile">
-            Stay<span>Ease</span>
-          </a>
-          <h2 class="auth-title">Admin Sign In</h2>
-          <p class="auth-subtitle">Authorized personnel only.</p>
+    <h1 class="admin-auth-title">Administrator Sign In</h1>
+    <p class="admin-auth-subtitle">Restricted access — authorized personnel only</p>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+    <div class="auth-alert auth-alert-error">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      <%= error %>
+    </div>
+    <% } %>
+
+    <% if (typeof success !== 'undefined' && success) { %>
+    <div class="auth-alert auth-alert-success">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <%= success %>
+    </div>
+    <% } %>
+
+    <form id="login-form" class="auth-form" action="/admin/login" method="POST">
+
+      <!-- Username -->
+      <div class="form-group" id="username-group">
+        <div class="input-wrapper">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <input type="text" class="form-input" id="admin-username" name="username" placeholder=" " required autocomplete="username" value="<%= typeof oldValues !== 'undefined' && oldValues.username ? oldValues.username : '' %>">
+          <label class="form-label" for="admin-username">Admin Username</label>
+          <div class="input-focus-line"></div>
         </div>
-
-        <!-- Success or Error Alerts -->
-        <% if (typeof success !== 'undefined' && success) { %>
-          <div class="alert-banner alert-banner-success">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-              <polyline points="22 4 12 14.01 9 11.01"/>
-            </svg>
-            <span><%= success %></span>
-          </div>
-        <% } %>
-        
-        <% if (typeof error !== 'undefined' && error) { %>
-          <div class="alert-banner alert-banner-error" id="server-error-banner">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="8" x2="12" y2="12"/>
-              <line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
-            <span><%= error %></span>
-          </div>
-        <% } %>
-
-        <form id="admin-login-form" class="auth-form" action="/admin/login" method="POST">
-          
-          <!-- Admin Username Input -->
-          <div class="form-group" id="group-username">
-            <div class="input-icon-wrapper">
-              <div class="input-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                  <circle cx="9" cy="7" r="4"/>
-                </svg>
-              </div>
-              <input type="text" class="form-input" id="username-input" name="username" placeholder=" " required autocomplete="username" value="<%= typeof oldValues !== 'undefined' ? oldValues.username : '' %>">
-              <label class="form-label" for="username-input">Admin Username</label>
-              <div class="input-focus-line"></div>
-            </div>
-            <div class="error-msg">Please enter your admin username.</div>
-          </div>
-
-          <!-- Admin Email Address Input -->
-          <div class="form-group" id="group-email">
-            <div class="input-icon-wrapper">
-              <div class="input-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                  <polyline points="22,6 12,13 2,6"/>
-                </svg>
-              </div>
-              <input type="email" class="form-input" id="email-input" name="email" placeholder=" " required autocomplete="email" value="<%= typeof oldValues !== 'undefined' ? oldValues.email : '' %>">
-              <label class="form-label" for="email-input">Admin Email</label>
-              <div class="input-focus-line"></div>
-            </div>
-            <div class="error-msg">Please enter a valid admin email address.</div>
-          </div>
-
-          <!-- Submit Button -->
-          <button type="submit" class="btn-auth-submit">
-            Enter Portal
-          </button>
-
-          <!-- Back link to landing page -->
-          <a href="/" class="auth-back-link">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="19" y1="12" x2="5" y2="12"/>
-              <polyline points="12 19 5 12 12 5"/>
-            </svg>
-            &larr; Back to Home
-          </a>
-        </form>
+        <div class="field-error">Username is required</div>
       </div>
+
+      <!-- Email -->
+      <div class="form-group" id="email-group">
+        <div class="input-wrapper">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <input type="email" class="form-input" id="admin-email" name="email" placeholder=" " required autocomplete="email" value="<%= typeof oldValues !== 'undefined' && oldValues.email ? oldValues.email : '' %>">
+          <label class="form-label" for="admin-email">Admin Email</label>
+          <div class="input-focus-line"></div>
+        </div>
+        <div class="field-error">A valid email is required</div>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn-auth">
+        Access Dashboard
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+      </button>
+
+    </form>
+
+    <div class="admin-auth-links">
+      <a href="/">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        Return to Landing
+      </a>
+      <a href="/admin/signup">Need access? Register as admin</a>
     </div>
+
+    <!-- Security Badge -->
+    <div class="admin-security-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Secure Admin Session • Stay-Ease v1.0
+    </div>
+
   </div>
 
+  <script src="/js/auth.js"></script>
+  
   <script>
-    const form = document.getElementById('admin-login-form');
-    const card = document.getElementById('auth-card-element');
-    const serverError = document.getElementById('server-error-banner');
-
-    // Trigger shake animation on server error
-    if (serverError) {
-      card.classList.add('shake-field');
-      setTimeout(() => card.classList.remove('shake-field'), 500);
-    }
-
-    form.addEventListener('submit', function(e) {
-      let hasError = false;
-
-      // Validate Username
-      const usernameInput = document.getElementById('username-input');
-      const groupUsername = document.getElementById('group-username');
-      if (!usernameInput.value.trim()) {
-        groupUsername.classList.add('has-error');
-        hasError = true;
+    // Lazy load fade-in
+    document.querySelectorAll('img').forEach(img => {
+      if (img.complete) {
+        img.classList.add('loaded');
       } else {
-        groupUsername.classList.remove('has-error');
+        img.addEventListener('load', () => img.classList.add('loaded'));
+        img.addEventListener('error', () => {
+          img.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80&fit=crop';
+          img.classList.add('loaded');
+        });
       }
-
-      // Validate Email
-      const emailInput = document.getElementById('email-input');
-      const groupEmail = document.getElementById('group-email');
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailInput.value.trim() || !emailRegex.test(emailInput.value.trim())) {
-        groupEmail.classList.add('has-error');
-        hasError = true;
-      } else {
-        groupEmail.classList.remove('has-error');
-      }
-
-      if (hasError) {
-        e.preventDefault();
-        card.classList.add('shake-field');
-        setTimeout(() => card.classList.remove('shake-field'), 500);
-      }
-    });
-
-    // Remove errors on input
-    document.querySelectorAll('.form-input').forEach(input => {
-      input.addEventListener('input', function() {
-        this.closest('.form-group').classList.remove('has-error');
-      });
     });
   </script>
 </body>

@@ -14,7 +14,7 @@ let useJsonDb = false;
 // Determine if we should use the JSON fallback based on connection URL
 const mongoUrl = process.env.mongodb_url;
 if (!mongoUrl || mongoUrl.includes("xxxxx")) {
-  console.log("⚠️ MongoDB URL is missing or is a placeholder. Using local JSON database (db.json).");
+  console.log("MongoDB URL is missing or is a placeholder. Using local JSON database (db.json).");
   useJsonDb = true;
 }
 
@@ -27,12 +27,12 @@ const defaultDb = {
       id: "1",
       fullName: "Super Admin",
       username: "admin",
-      email: "admin@stayandaman.com",
+      email: "admin@stayease.com",
       phone: "+91 98765 43210",
       avatar: "",
       location: "Shimla, India",
-      website: "https://stayandaman.com",
-      bio: "Stayandaman Administrator",
+      website: "https://stayease.com",
+      bio: "Stay-Ease Administrator",
       createdAt: "2025-01-01",
       lastLogin: null
     }
@@ -71,7 +71,7 @@ export const dbService = {
   setFallbackActive() {
     if (!useJsonDb) {
       useJsonDb = true;
-      console.log("🔄 dbService switched to local JSON DB fallback.");
+      console.log("dbService switched to local JSON DB fallback.");
     }
   },
   
@@ -183,11 +183,11 @@ export const dbService = {
           admin = new Admin({
             fullName: "Super Admin",
             username: "admin",
-            email: "admin@stayandaman.com",
+            email: "admin@stayease.com",
             phone: "+91 98765 43210",
             location: "Shimla, India",
-            website: "https://stayandaman.com",
-            bio: "Stayandaman Administrator"
+            website: "https://stayease.com",
+            bio: "Stay-Ease Administrator"
           });
           await admin.save();
         }
@@ -214,11 +214,11 @@ export const dbService = {
         id: "1",
         fullName: "Super Admin",
         username: "admin",
-        email: "admin@stayandaman.com",
+        email: "admin@stayease.com",
         phone: "+91 98765 43210",
         location: "Shimla, India",
-        website: "https://stayandaman.com",
-        bio: "Stayandaman Administrator",
+        website: "https://stayease.com",
+        bio: "Stay-Ease Administrator",
         avatar: "",
         createdAt: new Date().toISOString(),
         lastLogin: null
@@ -276,7 +276,7 @@ export const dbService = {
         id: "json_admin_" + Math.random().toString(36).substr(2, 9),
         fullName: data.displayName || "Admin",
         username: "admin",
-        email: data.email || "admin@stayandaman.com",
+        email: data.email || "admin@stayease.com",
         phone: data.phone || "",
         location: data.location || "",
         website: data.website || "",

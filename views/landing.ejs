@@ -3,81 +3,166 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Welcome to Stay-Ease - Select your portal to continue.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/landing.css">
-  <title>Welcome to Stay-Ease — Simplified Stays</title>
+  <meta name="description" content="Stay-Ease — Your perfect stay, simplified. Explore premium hotels, cozy lodges, and private rentals all in one place.">
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/landing.css">
+  <title>Welcome to Stay-Ease — Your Perfect Stay, Simplified</title>
 </head>
-<body>
+<body class="landing-body" style="background: none; min-height: 100vh; padding: 0; margin: 0;">
+  <div style="
+    background-image: 
+      linear-gradient(135deg,rgba(26,31,54,0.88),rgba(10,191,138,0.7)),
+      url('https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=1600&q=85&fit=crop');
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  ">
+
+  <!-- Floating Dots Pattern -->
+  <div class="landing-dots" aria-hidden="true">
+    <div class="landing-dot" style="top:10%;left:15%;--dur:7s;--delay:0s"></div>
+    <div class="landing-dot" style="top:25%;left:80%;--dur:5s;--delay:1s"></div>
+    <div class="landing-dot" style="top:60%;left:10%;--dur:8s;--delay:2s"></div>
+    <div class="landing-dot" style="top:75%;left:70%;--dur:6s;--delay:0.5s"></div>
+    <div class="landing-dot" style="top:40%;left:50%;--dur:9s;--delay:3s"></div>
+    <div class="landing-dot" style="top:85%;left:35%;--dur:7s;--delay:1.5s"></div>
+    <div class="landing-dot" style="top:15%;left:60%;--dur:6s;--delay:2.5s"></div>
+    <div class="landing-dot" style="top:50%;left:90%;--dur:8s;--delay:0.8s"></div>
+  </div>
 
   <div class="landing-container">
-    <!-- Premium Dark Backdrop Blur Overlay -->
-    <div class="background-overlay" aria-hidden="true"></div>
 
-    <!-- Center Brand Header -->
-    <header class="brand-overlay">
-      <div class="logo-container">
-        <h1 class="logo-text">Stay<span>Ease</span></h1>
-        <p class="brand-tagline">Your perfect stay, simplified</p>
+    <!-- ===== Brand Header ===== -->
+    <header class="landing-header">
+      <div class="landing-logo">
+        <!-- Shield Icon -->
+        <svg class="landing-logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="M9 12l2 2 4-4" stroke-width="2"/>
+        </svg>
+        <h1 class="landing-logo-text">Stay<span>Ease</span></h1>
       </div>
+      <p class="landing-tagline">Your Perfect Stay, Simplified</p>
+      <p class="landing-subtitle">Hotels • Lodges • Rentals — all in one place</p>
     </header>
 
-    <!-- Cards Wrapper -->
-    <div class="cards-wrapper">
-      
+    <!-- ===== Portal Cards ===== -->
+    <div class="landing-cards">
+
       <!-- LEFT CARD: Admin Portal -->
-      <section class="portal-card card-admin" onclick="navigateTo('/admin/login')">
-        <div class="card-icon">
+      <section class="portal-card card-admin" id="admin-portal-card" onclick="navigateTo('/admin/login')" style="background-image: linear-gradient(rgba(26,31,54,0.92),rgba(26,31,54,0.88)), url('https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800&q=80&fit=crop'); background-size: cover; background-position: center;">
+        <div class="portal-card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-            <line x1="9" y1="3" x2="9" y2="21"/>
-            <line x1="15" y1="3" x2="15" y2="21"/>
-            <line x1="3" y1="9" x2="21" y2="9"/>
-            <line x1="3" y1="15" x2="21" y2="15"/>
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <rect x="9" y="9" width="6" height="5" rx="1"/>
+            <path d="M12 9V7"/>
           </svg>
         </div>
-        <div>
-          <h2 class="card-title">Admin Portal</h2>
-          <p class="card-subtitle">Manage listings, users & overall content dashboard.</p>
+        <h2 class="portal-card-title">Admin Portal</h2>
+        <p class="portal-card-desc">Manage listings, bookings & users from a powerful dashboard</p>
+        <div class="portal-card-stats">
+          <span>120+ Listings</span>
+          <span class="stat-divider"></span>
+          <span>3 Categories</span>
+          <span class="stat-divider"></span>
+          <span>Real-time</span>
         </div>
-        <a href="/admin/login" class="panel-btn admin-btn" onclick="event.stopPropagation();">Enter as Admin</a>
+        <a href="/admin/login" class="portal-card-btn" onclick="event.stopPropagation();">
+          Enter Dashboard
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+        </a>
       </section>
 
-      <!-- Center OR Divider -->
-      <div class="divider-or" aria-hidden="true">
-        <span>OR</span>
+      <!-- OR Divider -->
+      <div class="landing-divider" aria-hidden="true">
+        <div class="landing-divider-line"></div>
+        <span class="landing-divider-badge">OR</span>
+        <div class="landing-divider-line"></div>
       </div>
 
-      <!-- RIGHT CARD: User Portal -->
-      <section class="portal-card card-user" onclick="navigateTo('/user/login')">
-        <div class="card-icon">
+      <!-- RIGHT CARD: User/Guest Portal -->
+      <section class="portal-card card-user" id="user-portal-card" onclick="navigateTo('/user/login')" style="background-image: linear-gradient(rgba(10,191,138,0.85),rgba(26,31,54,0.8)), url('https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=800&q=80&fit=crop'); background-size: cover; background-position: center;">
+        <div class="portal-card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+            <path d="M2 12h20"/>
+            <path d="M12 8l4 4-4 4"/>
           </svg>
         </div>
-        <div>
-          <h2 class="card-title">Explore & Stay</h2>
-          <p class="card-subtitle">Discover premium hotels, nature lodges & vacation rentals.</p>
+        <h2 class="portal-card-title">Find Your Stay</h2>
+        <p class="portal-card-desc">Explore handpicked hotels, lodges & rentals across destinations</p>
+        <div class="portal-card-stats">
+          <span>500+ Reviews</span>
+          <span class="stat-divider"></span>
+          <span>Top Rated</span>
+          <span class="stat-divider"></span>
+          <span>Best Price</span>
         </div>
-        <a href="/user/login" class="panel-btn user-btn" onclick="event.stopPropagation();">Enter as User</a>
+        <a href="/user/login" class="portal-card-btn" onclick="event.stopPropagation();">
+          Explore Now
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+        </a>
       </section>
 
     </div>
+
+    <!-- ===== Trust Badges ===== -->
+    <div class="landing-trust">
+      <div class="trust-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Verified Properties
+      </div>
+      <div class="trust-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Best Price Guarantee
+      </div>
+      <div class="trust-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        24/7 Support
+      </div>
+      <div class="trust-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Free Cancellation
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="landing-footer">
+    © 2025 Stay-Ease. All rights reserved.
+  </footer>
+
   </div>
 
   <script>
     function navigateTo(url) {
       document.body.style.opacity = '0';
       document.body.style.transition = 'opacity 0.4s ease';
-      setTimeout(() => {
-        window.location.href = url;
-      }, 400);
+      setTimeout(() => { window.location.href = url; }, 400);
     }
+  </script>
+  
+  <script>
+    // Lazy load fade-in
+    document.querySelectorAll('img').forEach(img => {
+      if (img.complete) {
+        img.classList.add('loaded');
+      } else {
+        img.addEventListener('load', () => img.classList.add('loaded'));
+        img.addEventListener('error', () => {
+          img.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80&fit=crop';
+          img.classList.add('loaded');
+        });
+      }
+    });
   </script>
 </body>
 </html>

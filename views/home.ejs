@@ -1,291 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="Stayandaman — Your all-in-one platform for booking hotels, rentals, and lodges. Premium stays, effortless booking.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/home.css">
-    <title>Stayandaman — Where Every Stay Feels Like Home</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Stay-Ease — Find your perfect stay. Explore verified hotels, cozy lodges, and private rentals.">
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/home.css">
+  <title>Home — Stay-Ease</title>
 </head>
-
 <body>
 
-    <!-- ===== Particles Background ===== -->
-    <div class="particles" id="particles" aria-hidden="true"></div>
+  <!-- ===== Navbar ===== -->
+  <nav class="navbar" id="main-navbar">
+    <a href="/home" class="navbar-logo">Stay<span>Ease</span></a>
 
-    <!-- ===== Navbar ===== -->
-    <nav class="navbar" id="navbar">
-        <div class="nav-container">
-            <a href="/home" class="nav-logo" id="nav-logo">
-                <!-- <span class="logo-icon">◆</span> -->
-                <span class="logo-text">Stay<span class="logo-accent">andaman</span></span>
-            </a>
+    <div class="navbar-links" id="navbar-links">
+      <a href="/home" class="navbar-link active">Home</a>
+      <a href="/home/hotel" class="navbar-link">Hotels</a>
+      <a href="/home/lodges" class="navbar-link">Lodges</a>
+      <a href="/home/rentals" class="navbar-link">Rentals</a>
+    </div>
 
-            <div class="nav-links" id="nav-links">
-                <a href="/home" class="nav-link active" id="nav-home">Home</a>
-                <a href="/home/hotel" class="nav-link" id="nav-hotels">Hotels</a>
-                <a href="/home/Rentals" class="nav-link" id="nav-rentals">Rentals</a>
-                <a href="/home/Lodges" class="nav-link" id="nav-lodges">Lodges</a>
-            </div>
+    <% if (user) { %>
+    <div class="navbar-user" id="navbar-user" onclick="toggleDropdown()">
+      <div class="navbar-avatar">
+        <% if (user.avatar) { %>
+          <img src="<%= user.avatar %>" alt="<%= user.fullName %>">
+        <% } else { %>
+          <%= user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U' %>
+        <% } %>
+      </div>
+      <span class="navbar-username"><%= user.fullName ? user.fullName.split(' ')[0] : 'User' %></span>
+      <svg class="navbar-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
 
-            <div class="nav-actions">
-                <% if (user) { %>
-                    <div class="user-dropdown" id="user-dropdown">
-                        <div class="user-dropdown-toggle" id="user-dropdown-toggle">
-                            <% if (user.avatar) { %>
-                                <img src="<%= user.avatar %>" alt="<%= user.fullName %>" class="nav-avatar">
-                            <% } else { %>
-                                <div class="nav-avatar-placeholder"><%= user.fullName.charAt(0).toUpperCase() %></div>
-                            <% } %>
-                            <span class="nav-username"><%= user.fullName %></span>
-                            <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>
-                        </div>
-                        <div class="user-dropdown-menu" id="user-dropdown-menu">
-                            <a href="/profile" class="dropdown-item">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                                My Profile
-                            </a>
-                            <form action="/user/logout" method="POST" style="margin: 0;">
-                                <button type="submit" class="dropdown-item btn-logout-submit">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                                    Logout
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                <% } else { %>
-                    <button class="btn-ghost" onclick="location.href='/login'">Log In</button>
-                    <button class="btn-primary-sm" onclick="location.href='/signup'">Get Started</button>
-                <% } %>
-            </div>
+      <div class="navbar-dropdown" id="navbar-dropdown">
+        <a href="/profile" class="navbar-dropdown-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          My Profile
+        </a>
+        <div class="navbar-dropdown-divider"></div>
+        <form action="/user/logout" method="POST" style="margin:0;">
+          <button type="submit" class="navbar-dropdown-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Logout
+          </button>
+        </form>
+      </div>
+    </div>
+    <% } else { %>
+    <a href="/user/login" class="btn btn-gold btn-sm">Sign In</a>
+    <% } %>
 
-            <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
+    <button class="navbar-toggle" id="navbar-toggle" onclick="document.getElementById('navbar-links').classList.toggle('show-mobile')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </nav>
+
+  <!-- ===== Hero Section ===== -->
+  <section class="hero hero-section" style="background-image: linear-gradient(rgba(26,31,54,0.55),rgba(26,31,54,0.65)), url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1600&q=85&fit=crop'); height: 580px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background-attachment: fixed; background-size: cover; background-position: center;">
+    <% if (user) { %>
+    <p class="hero-greeting">Hello, <%= user.fullName ? user.fullName.split(' ')[0] : 'Traveler' %>!</p>
+    <% } %>
+    <h1 class="hero-title">Find Your Perfect Stay</h1>
+    <p class="hero-subtitle">Explore verified hotels, cozy lodges &amp; private rentals across the best destinations</p>
+
+    <div class="hero-search">
+      <input type="text" class="hero-search-input" placeholder="Search by location, property name...">
+      <button class="hero-search-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Search
+      </button>
+    </div>
+  </section>
+
+  <!-- ===== Categories Section ===== -->
+  <section class="section">
+    <h2 class="section-title">Browse by Category</h2>
+    <p class="section-subtitle">Discover the perfect type of stay for your next adventure</p>
+
+    <div class="categories-grid">
+      <!-- Hotels -->
+      <a href="/home/hotel" class="category-card">
+        <img src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&q=80&fit=crop" loading="lazy" alt="Hotels" onerror="this.src='https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80&fit=crop'">
+        <div class="cat-overlay"></div>
+        <div class="category-card-content" style="position: absolute; bottom: 20px; left: 20px; z-index: 2;">
+          <h3 class="category-card-name" style="color: white; font-size: 24px; font-weight: 700; margin: 0 0 4px 0;">Hotels</h3>
+          <p class="category-card-count" style="color: rgba(255,255,255,0.7); font-size: 14px; margin: 0 0 12px 0;">120+ Properties</p>
+          <span class="btn btn-gold btn-sm" style="display: inline-block;">Explore &rarr;</span>
         </div>
-    </nav>
+      </a>
 
-    <!-- ===== Hero ===== -->
-    <section class="hero" id="hero-section">
-        <div class="hero-glow" aria-hidden="true"></div>
-
-        <div class="hero-content fade-up">
-
-            <h1 class="hero-title">
-                Where Every Stay<br>
-                Feels Like <span class="gradient-text">Home</span>
-            </h1>
-
-            <p class="hero-subtitle">
-                Discover curated hotels, charming rentals, and serene lodges — all in one platform.
-                Book effortlessly and save more with exclusive member deals.
-            </p>
+      <!-- Lodges -->
+      <a href="/home/lodges" class="category-card">
+        <img src="https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=800&q=80&fit=crop" loading="lazy" alt="Lodges" onerror="this.src='https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80&fit=crop'">
+        <div class="cat-overlay"></div>
+        <div class="category-card-content" style="position: absolute; bottom: 20px; left: 20px; z-index: 2;">
+          <h3 class="category-card-name" style="color: white; font-size: 24px; font-weight: 700; margin: 0 0 4px 0;">Lodges</h3>
+          <p class="category-card-count" style="color: rgba(255,255,255,0.7); font-size: 14px; margin: 0 0 12px 0;">80+ Properties</p>
+          <span class="btn btn-teal btn-sm" style="display: inline-block;">Explore &rarr;</span>
         </div>
-    <!-- ===== Categories ===== -->
-    <section class="categories" id="categories">
-        <div class="section-container">
-            <div class="section-header fade-up">
-                <!-- <span class="section-tag">Browse By Type</span> -->
-                <h2 class="section-title">Find Your <span class="gradient-text">Perfect Stay</span></h2>
-                <p class="section-desc">From luxury hotels to cozy lodges, explore curated categories tailored to every
-                    type of traveler.</p>
-            </div>
+      </a>
 
-            <div class="categories-grid">
-                <!-- Hotels -->
-                <a href="/home/hotel" class="category-card fade-up delay-1" id="category-hotels"
-                    style="--card-gradient: linear-gradient(135deg, #7c3aed, #6366f1)">
-                    <div class="category-bg"></div>
-                    <div class="category-content">
-                        <h3>Hotels</h3>
-                        <p>Premium hotels with world-class amenities, room service, and unforgettable experiences in top
-                            destinations.</p>
-                        <span class="category-link">
-                            Explore Hotels
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M5 12h14"></path>
-                                <path d="m12 5 7 7-7 7"></path>
-                            </svg>
-                        </span>
-                    </div>
-                </a>
-
-                <!-- Rentals -->
-                <a href="/home/Rentals" class="category-card fade-up delay-2" id="category-rentals"
-                    style="--card-gradient: linear-gradient(135deg, #ec4899, #f97316)">
-                    <div class="category-bg"></div>
-                    <div class="category-content">
-                        <h3>Rentals</h3>
-                        <p>Private homes, apartments, and villas with full kitchens — perfect for extended stays and
-                            family vacations.</p>
-                        <span class="category-link">
-                            Explore Rentals
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M5 12h14"></path>
-                                <path d="m12 5 7 7-7 7"></path>
-                            </svg>
-                        </span>
-                    </div>
-                </a>
-
-                <!-- Lodges -->
-                <a href="/home/Lodges" class="category-card fade-up delay-3" id="category-lodges"
-                    style="--card-gradient: linear-gradient(135deg, #14b8a6, #22c55e)">
-                    <div class="category-bg"></div>
-                    <div class="category-content">
-                        <h3>Lodges</h3>
-                        <p>Nature retreats and mountain lodges surrounded by breathtaking scenery — disconnect and
-                            recharge.</p>
-                        <span class="category-link">
-                            Explore Lodges
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M5 12h14"></path>
-                                <path d="m12 5 7 7-7 7"></path>
-                            </svg>
-                        </span>
-                    </div>
-                </a>
-            </div>
+      <!-- Rentals -->
+      <a href="/home/rentals" class="category-card">
+        <img src="https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=800&q=80&fit=crop" loading="lazy" alt="Rentals" onerror="this.src='https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80&fit=crop'">
+        <div class="cat-overlay"></div>
+        <div class="category-card-content" style="position: absolute; bottom: 20px; left: 20px; z-index: 2;">
+          <h3 class="category-card-name" style="color: white; font-size: 24px; font-weight: 700; margin: 0 0 4px 0;">Rentals</h3>
+          <p class="category-card-count" style="color: rgba(255,255,255,0.7); font-size: 14px; margin: 0 0 12px 0;">60+ Properties</p>
+          <span class="btn btn-gold btn-sm" style="display: inline-block;">Explore &rarr;</span>
         </div>
-    </section>
-    <!-- ===== Scripts ===== -->
-    <script>
-        // ===== Scroll-triggered fade-up animations =====
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+      </a>
+    </div>
+  </section>
 
-        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  <!-- ===== Why Stay-Ease ==== -->
+  <section class="section" style="background: var(--bg-light);">
+    <h2 class="section-title">Why Stay-Ease</h2>
+    <p class="section-subtitle">Everything you need for the perfect travel experience</p>
 
-        // ===== Navbar scroll effect =====
-        const navbar = document.getElementById('navbar');
-        let lastScroll = 0;
-        window.addEventListener('scroll', () => {
-            const currentScroll = window.scrollY;
-            if (currentScroll > 60) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-            lastScroll = currentScroll;
-        }, { passive: true });
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon"></div>
+        <h3 class="feature-title">Verified Properties</h3>
+        <p class="feature-desc">Every listing is verified for quality, safety, and accurate descriptions.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"></div>
+        <h3 class="feature-title">Best Price Guarantee</h3>
+        <p class="feature-desc">Find a lower price elsewhere? We'll match it — guaranteed.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"></div>
+        <h3 class="feature-title">24/7 Support</h3>
+        <p class="feature-desc">Round-the-clock assistance for bookings, changes, and emergencies.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"></div>
+        <h3 class="feature-title">Free Cancellation</h3>
+        <p class="feature-desc">Plans changed? Cancel most bookings for free up to 24 hours before.</p>
+      </div>
+    </div>
+  </section>
 
-        // ===== Mobile navigation toggle =====
-        const mobileToggle = document.getElementById('mobile-toggle');
-        const navLinks = document.getElementById('nav-links');
-        mobileToggle.addEventListener('click', () => {
-            mobileToggle.classList.toggle('active');
-            navLinks.classList.toggle('open');
-            document.body.style.overflow = navLinks.classList.contains('open') ? 'hidden' : '';
+  <!-- ===== Footer ===== -->
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-logo">Stay<span>Ease</span></div>
+        <p class="footer-brand-text">Your perfect stay, simplified. Explore premium hotels, cozy lodges, and private rentals all in one place.</p>
+      </div>
+      <div>
+        <h4 class="footer-heading">Quick Links</h4>
+        <a href="/home" class="footer-link">Home</a>
+        <a href="/home/hotel" class="footer-link">Hotels</a>
+        <a href="/home/lodges" class="footer-link">Lodges</a>
+        <a href="/home/rentals" class="footer-link">Rentals</a>
+      </div>
+      <div>
+        <h4 class="footer-heading">Contact</h4>
+        <a href="#" class="footer-link">support@stayease.com</a>
+        <a href="#" class="footer-link">+91 98765 43210</a>
+        <a href="#" class="footer-link">Shimla, India</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2025 Stay-Ease. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    // Navbar scroll shadow
+    window.addEventListener('scroll', () => {
+      document.getElementById('main-navbar').classList.toggle('scrolled', window.scrollY > 10);
+    });
+
+    // User dropdown toggle
+    function toggleDropdown() {
+      const user = document.getElementById('navbar-user');
+      const dd = document.getElementById('navbar-dropdown');
+      if (user && dd) {
+        user.classList.toggle('open');
+        dd.classList.toggle('show');
+      }
+    }
+
+    // Close dropdown on outside click
+    document.addEventListener('click', (e) => {
+      const user = document.getElementById('navbar-user');
+      if (user && !user.contains(e.target)) {
+        user.classList.remove('open');
+        const dd = document.getElementById('navbar-dropdown');
+        if (dd) dd.classList.remove('show');
+      }
+    });
+  </script>
+  
+  <script>
+    // Lazy load fade-in
+    document.querySelectorAll('img').forEach(img => {
+      if (img.complete) {
+        img.classList.add('loaded');
+      } else {
+        img.addEventListener('load', () => img.classList.add('loaded'));
+        img.addEventListener('error', () => {
+          img.src = 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80&fit=crop';
+          img.classList.add('loaded');
         });
-
-        // Close mobile nav when clicking a link
-        navLinks.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', () => {
-                mobileToggle.classList.remove('active');
-                navLinks.classList.remove('open');
-                document.body.style.overflow = '';
-            });
-        });
-
-        // ===== Animated stat counters =====
-        const statObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const el = entry.target;
-                    const target = parseFloat(el.dataset.target);
-                    const suffix = el.dataset.suffix || '';
-                    const isDecimal = target % 1 !== 0;
-                    const duration = 2000;
-                    const startTime = performance.now();
-
-                    function animate(currentTime) {
-                        const elapsed = currentTime - startTime;
-                        const progress = Math.min(elapsed / duration, 1);
-                        // Ease-out cubic
-                        const eased = 1 - Math.pow(1 - progress, 3);
-                        const current = target * eased;
-
-                        if (isDecimal) {
-                            el.textContent = current.toFixed(1) + suffix;
-                        } else {
-                            el.textContent = Math.floor(current) + suffix;
-                        }
-
-                        if (progress < 1) {
-                            requestAnimationFrame(animate);
-                        }
-                    }
-                    requestAnimationFrame(animate);
-                    statObserver.unobserve(el);
-                }
-            });
-        }, { threshold: 0.5 });
-
-        document.querySelectorAll('.stat-number[data-target]').forEach(el => statObserver.observe(el));
-
-        // ===== Floating particles =====
-        const particlesContainer = document.getElementById('particles');
-        function createParticles() {
-            for (let i = 0; i < 30; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                const size = Math.random() * 4 + 2;
-                particle.style.width = size + 'px';
-                particle.style.height = size + 'px';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.top = Math.random() * 100 + '%';
-                particle.style.setProperty('--dx', (Math.random() - 0.5) * 200 + 'px');
-                particle.style.setProperty('--dy', (Math.random() - 0.5) * 200 + 'px');
-                particle.style.animationDuration = (Math.random() * 15 + 10) + 's';
-                particle.style.animationDelay = (Math.random() * 10) + 's';
-                particlesContainer.appendChild(particle);
-            }
-        }
-        createParticles();
-
-        // ===== Smooth scroll for anchor links =====
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                const href = this.getAttribute('href');
-                if (href === '#') return;
-                e.preventDefault();
-                const target = document.querySelector(href);
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-        });
-
-        // ===== User Dropdown =====
-        const dropdownToggle = document.getElementById('user-dropdown-toggle');
-        const dropdownMenu = document.getElementById('user-dropdown-menu');
-        if (dropdownToggle && dropdownMenu) {
-            dropdownToggle.addEventListener('click', (e) => {
-                e.stopPropagation();
-                dropdownMenu.classList.toggle('show');
-            });
-            document.addEventListener('click', () => {
-                dropdownMenu.classList.remove('show');
-            });
-        }
-    </script>
-
+      }
+    });
+  </script>
 </body>
-
 </html>

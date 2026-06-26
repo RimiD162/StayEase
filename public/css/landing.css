@@ -1,0 +1,426 @@
+/* ═══════════════════════════════════════════════════
+   STAY-EASE — Landing Page Styles
+   Full-screen animated gradient with glassmorphism cards
+   ═══════════════════════════════════════════════════ */
+
+/* ===== Page Body ===== */
+.landing-body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: linear-gradient(135deg, #1a1f36 0%, #2d3561 40%, #1a3a4a 70%, #0abf8a 100%);
+  background-size: 300% 300%;
+  animation: gradientShift 12s ease infinite;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ===== Floating Decorative Circles ===== */
+.landing-body::before,
+.landing-body::after {
+  content: '';
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.landing-body::before {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(245, 166, 35, 0.15) 0%, transparent 70%);
+  top: -120px;
+  right: -100px;
+  animation: float 8s ease-in-out infinite;
+}
+
+.landing-body::after {
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, rgba(10, 191, 138, 0.15) 0%, transparent 70%);
+  bottom: -100px;
+  left: -80px;
+  animation: float 10s ease-in-out infinite 2s;
+}
+
+/* ===== Floating Dots Pattern ===== */
+.landing-dots {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.landing-dot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+  animation: float var(--dur, 6s) ease-in-out infinite var(--delay, 0s);
+}
+
+/* ===== Main Container ===== */
+.landing-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1100px;
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-12);
+  animation: fadeInUp 0.8s ease-out;
+}
+
+/* ===== Brand Header ===== */
+.landing-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.landing-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.landing-logo-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--secondary);
+  filter: drop-shadow(0 2px 8px rgba(245, 166, 35, 0.4));
+}
+
+.landing-logo-text {
+  font-family: var(--font-display);
+  font-size: 42px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.5px;
+}
+
+.landing-logo-text span {
+  color: var(--secondary);
+}
+
+.landing-tagline {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 400;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.75);
+  letter-spacing: 0.5px;
+}
+
+.landing-subtitle {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 400;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* ===== Cards Wrapper ===== */
+.landing-cards {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-8);
+  width: 100%;
+  max-width: 900px;
+}
+
+/* ===== Portal Card (Glass) ===== */
+.portal-card {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-xl);
+  padding: var(--space-10) var(--space-8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-5);
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.portal-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-xl);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.portal-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.portal-card:hover::before {
+  opacity: 1;
+}
+
+/* — Admin Card — */
+.card-admin:hover {
+  box-shadow: var(--shadow-gold);
+}
+
+.card-admin::before {
+  background: linear-gradient(135deg, rgba(245, 166, 35, 0.08) 0%, transparent 60%);
+}
+
+/* — User Card — */
+.card-user:hover {
+  box-shadow: var(--shadow-teal);
+}
+
+.card-user::before {
+  background: linear-gradient(135deg, rgba(10, 191, 138, 0.08) 0%, transparent 60%);
+}
+
+/* ===== Card Icon ===== */
+.portal-card-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.portal-card-icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.card-admin .portal-card-icon {
+  background: rgba(245, 166, 35, 0.15);
+  color: var(--secondary);
+}
+
+.card-user .portal-card-icon {
+  background: rgba(10, 191, 138, 0.15);
+  color: var(--accent);
+}
+
+/* ===== Card Content ===== */
+.portal-card-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.portal-card-desc {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.6;
+  max-width: 260px;
+}
+
+/* ===== Stats Row ===== */
+.portal-card-stats {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.portal-card-stats .stat-divider {
+  width: 1px;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ===== Card CTA Button ===== */
+.portal-card-btn {
+  margin-top: var(--space-3);
+  padding: var(--space-3) var(--space-8);
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.portal-card-btn:active {
+  transform: scale(0.97);
+}
+
+.card-admin .portal-card-btn {
+  background: linear-gradient(135deg, var(--secondary), #e09510);
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(245, 166, 35, 0.3);
+}
+
+.card-admin .portal-card-btn:hover {
+  box-shadow: 0 4px 20px rgba(245, 166, 35, 0.45);
+  transform: translateY(-1px);
+}
+
+.card-user .portal-card-btn {
+  background: linear-gradient(135deg, var(--accent), #089e72);
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(10, 191, 138, 0.3);
+}
+
+.card-user .portal-card-btn:hover {
+  box-shadow: 0 4px 20px rgba(10, 191, 138, 0.45);
+  transform: translateY(-1px);
+}
+
+.portal-card-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ===== OR Divider ===== */
+.landing-divider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.landing-divider-line {
+  width: 1px;
+  height: 80px;
+  background: linear-gradient(180deg, transparent, rgba(255,255,255,0.2), transparent);
+}
+
+.landing-divider-badge {
+  padding: var(--space-2) var(--space-4);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 2px;
+}
+
+/* ===== Trust Badges ===== */
+.landing-trust {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.trust-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 500;
+}
+
+.trust-badge svg {
+  width: 16px;
+  height: 16px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+/* ===== Footer ===== */
+.landing-footer {
+  position: absolute;
+  bottom: var(--space-6);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.3);
+  text-align: center;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .landing-cards {
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .landing-divider {
+    flex-direction: row;
+    gap: var(--space-4);
+  }
+
+  .landing-divider-line {
+    width: 80px;
+    height: 1px;
+  }
+
+  .landing-logo-text {
+    font-size: 32px;
+  }
+
+  .landing-tagline {
+    font-size: 18px;
+  }
+
+  .portal-card {
+    padding: var(--space-8) var(--space-6);
+  }
+
+  .landing-trust {
+    gap: var(--space-4);
+  }
+
+  .landing-container {
+    gap: var(--space-8);
+  }
+}
+
+@media (max-width: 480px) {
+  .landing-logo-text {
+    font-size: 28px;
+  }
+
+  .portal-card-title {
+    font-size: 20px;
+  }
+
+  .landing-trust {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .portal-card-stats {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

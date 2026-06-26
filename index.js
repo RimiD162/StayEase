@@ -29,6 +29,48 @@ app.use(express.static(path.join(__dirname, "public")));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+const FALLBACK_IMAGES = {
+  Hotel: [
+    'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&q=80&fit=crop',
+  ],
+  Lodge: [
+    'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=800&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=800&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1521401830884-6c03c1c87ebb?w=800&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&q=80&fit=crop',
+  ],
+  Rental: [
+    'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=800&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=800&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800&q=80&fit=crop',
+  ]
+};
+
+function getFallbackImage(category, index = 0) {
+  const imgs = FALLBACK_IMAGES[category] || FALLBACK_IMAGES['Hotel'];
+  return imgs[index % imgs.length];
+}
+
+function getRandomFallback(category) {
+  const imgs = FALLBACK_IMAGES[category] || FALLBACK_IMAGES['Hotel'];
+  return imgs[Math.floor(Math.random() * imgs.length)];
+}
+
+app.locals.getFallbackImage  = getFallbackImage;
+app.locals.getRandomFallback = getRandomFallback;
+app.locals.FALLBACK_IMAGES   = FALLBACK_IMAGES;
+
+
 // ===== Session =====
 app.use(
   session({
@@ -45,13 +87,13 @@ const mongoUrl = process.env.mongodb_url;
 if (mongoUrl && !mongoUrl.includes("xxxxx")) {
   mongoose
     .connect(mongoUrl, { dbName: "stayandaman", serverSelectionTimeoutMS: 5000 })
-    .then(() => console.log("✅ Connected to MongoDB"))
+    .then(() => console.log("Connected to MongoDB"))
     .catch((err) => {
-      console.error("❌ MongoDB connection error:", err.message);
+      console.error("MongoDB connection error:", err.message);
       dbService.setFallbackActive();
     });
 } else {
-  console.log("ℹ️ Skipping MongoDB connection: using JSON database fallback.");
+  console.log("Skipping MongoDB connection: using JSON database fallback.");
   dbService.setFallbackActive();
 }
 
@@ -328,40 +370,46 @@ app.post("/profile", isUserLoggedIn, async (req, res) => {
 });
 
 app.get("/hotels", (req, res) => res.redirect("/home/hotel"));
-app.get("/lodges", (req, res) => res.redirect("/home/Lodges"));
-app.get("/rentals", (req, res) => res.redirect("/home/Rentals"));
+app.get("/lodges", (req, res) => res.redirect("/home/lodges"));
+app.get("/rentals", (req, res) => res.redirect("/home/rentals"));
 
-app.get("/home", isUserLoggedIn, (req, res) => {
-  res.render("home");
+app.get("/home", isUserLoggedIn, async (req, res) => {
+  try {
+    const listings = await dbService.getListings();
+    res.render("home", { listings: listings.slice(0, 6) });
+  } catch (err) {
+    console.error(err);
+    res.render("home", { listings: [] });
+  }
 });
 
 app.get("/home/hotel", isUserLoggedIn, async (req, res) => {
   try {
     const listings = await dbService.getListings({ category: "Hotel" });
-    res.render("hotel", { listings });
+    res.render("hotels", { listings });
   } catch (err) {
     console.error(err);
-    res.render("hotel", { listings: [] });
+    res.render("hotels", { listings: [] });
   }
 });
 
-app.get("/home/Rentals", isUserLoggedIn, async (req, res) => {
+app.get("/home/rentals", isUserLoggedIn, async (req, res) => {
   try {
     const listings = await dbService.getListings({ category: "Rental" });
-    res.render("Rentals", { listings });
+    res.render("rentals", { listings });
   } catch (err) {
     console.error(err);
-    res.render("Rentals", { listings: [] });
+    res.render("rentals", { listings: [] });
   }
 });
 
-app.get("/home/Lodges", isUserLoggedIn, async (req, res) => {
+app.get("/home/lodges", isUserLoggedIn, async (req, res) => {
   try {
     const listings = await dbService.getListings({ category: "Lodge" });
-    res.render("Lodges", { listings });
+    res.render("lodges", { listings });
   } catch (err) {
     console.error(err);
-    res.render("Lodges", { listings: [] });
+    res.render("lodges", { listings: [] });
   }
 });
 
