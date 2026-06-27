@@ -63,6 +63,12 @@
                     <span class="link-count" id="user-count-badge">0</span>
                 </a>
 
+                <a class="sidebar-link" data-page="bookings" id="nav-bookings">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    Manage Bookings
+                    <span class="link-count" id="booking-count-badge">0</span>
+                </a>
+
                 <div class="sidebar-section-label">Account</div>
 
                 <a class="sidebar-link" data-page="profile" id="nav-profile">
@@ -146,6 +152,26 @@
                                 <div class="stat-label">Total Users</div>
                                 <div class="stat-number" id="stat-users">0</div>
                                 <div class="stat-sub" id="stat-users-today" style="font-size: 0.78rem; opacity: 0.7; margin-top: 4px;">0 New Today</div>
+                            </div>
+                        </div>
+                        <div class="stat-card booking-stat" style="cursor: pointer;" onclick="switchPage('bookings')">
+                            <div class="stat-icon booking-icon" style="background: rgba(245, 166, 35, 0.1); color: var(--secondary); display:flex; align-items:center; justify-content:center;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px; height:20px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">Total Bookings</div>
+                                <div class="stat-number" id="stat-bookings">0</div>
+                                <div class="stat-sub" id="stat-bookings-today" style="font-size: 0.78rem; opacity: 0.7; margin-top: 4px;">0 New Today</div>
+                            </div>
+                        </div>
+                        <div class="stat-card revenue-stat">
+                            <div class="stat-icon revenue-icon" style="background: rgba(46, 204, 113, 0.1); color: var(--success); display:flex; align-items:center; justify-content:center;">
+                                <span style="font-size: 20px; font-weight: 700; font-family:var(--font-mono);">₹</span>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">Total Revenue</div>
+                                <div class="stat-number" id="stat-revenue">₹0</div>
+                                <div class="stat-sub" style="font-size: 0.78rem; opacity: 0.7; margin-top: 4px;">Revenue sum</div>
                             </div>
                         </div>
                         <div class="stat-card total-stat">
@@ -346,6 +372,123 @@
                                 </thead>
                                 <tbody id="users-table-body">
                                     <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== Bookings Page ===== -->
+                <div class="admin-page" id="page-bookings">
+                    <div class="section-header">
+                        <h2 class="section-title-text">Manage Bookings</h2>
+                        <button class="btn-add-listing" onclick="exportBookingsCSV()" style="background: var(--accent);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;margin-right:6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            Export CSV
+                        </button>
+                    </div>
+
+                    <!-- Revenue Summary Card -->
+                    <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 24px;">
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <div class="stat-label">Total Revenue</div>
+                                <div class="stat-number" style="color: var(--primary);" id="rev-total">₹0</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <div class="stat-label">This Month Revenue</div>
+                                <div class="stat-number" style="color: var(--accent);" id="rev-month">₹0</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <div class="stat-label">Pending Amount</div>
+                                <div class="stat-number" style="color: var(--secondary);" id="rev-pending">₹0</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <div class="stat-label">Cancelled Count</div>
+                                <div class="stat-number" style="color: var(--danger);" id="rev-cancelled-count">0</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filter / Search Bar -->
+                    <div class="filter-card" style="margin-bottom: 24px;">
+                        <div class="filter-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            Search &amp; Filter Bookings
+                        </div>
+                        <div class="form-grid" style="grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 10px;">
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label class="form-label" for="filter-booking-search">Search Keyword</label>
+                                <input class="form-input" type="text" id="filter-booking-search" oninput="filterBookings()" placeholder="Search Booking ID, Guest Name, or Property...">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="filter-booking-category">Category</label>
+                                <select class="form-select" id="filter-booking-category" onchange="filterBookings()" style="padding: 10px; font-size: 13px;">
+                                    <option value="">All Categories</option>
+                                    <option value="Hotel">Hotel</option>
+                                    <option value="Lodge">Lodge</option>
+                                    <option value="Rental">Rental</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="filter-booking-status">Status</label>
+                                <select class="form-select" id="filter-booking-status" onchange="filterBookings()" style="padding: 10px; font-size: 13px;">
+                                    <option value="">All Statuses</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Confirmed">Confirmed</option>
+                                    <option value="Cancelled">Cancelled</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="filter-booking-payment">Payment Method</label>
+                                <select class="form-select" id="filter-booking-payment" onchange="filterBookings()" style="padding: 10px; font-size: 13px;">
+                                    <option value="">All Payments</option>
+                                    <option value="Pay at Property">Pay at Property</option>
+                                    <option value="UPI / Net Banking">UPI / Net Banking</option>
+                                    <option value="Pay Partial">Pay Partial</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label class="form-label">Check-in Date Range</label>
+                                <div style="display: flex; gap: 8px; align-items: center;">
+                                    <input type="date" id="filter-booking-date-start" class="form-input" onchange="filterBookings()" style="padding: 10px; font-size: 13px;">
+                                    <span style="color: var(--text-soft); font-size: 12px;">to</span>
+                                    <input type="date" id="filter-booking-date-end" class="form-input" onchange="filterBookings()" style="padding: 10px; font-size: 13px;">
+                                </div>
+                            </div>
+                            <div class="form-group" style="display: flex; align-items: flex-end; justify-content: flex-end;">
+                                <button type="button" class="btn-cancel" onclick="resetBookingFilters()" style="width: 100%; height: 42px; font-size: 13px;">Reset Filters</button>
+                            </div>
+                        </div>
+                        <div style="font-size: 13px; color: var(--text-soft); font-weight: 500; margin-top: 12px;">
+                            Showing <span id="booking-results-count" style="color: var(--primary); font-weight: 700;">0</span> booking records
+                        </div>
+                    </div>
+
+                    <!-- Bookings Table -->
+                    <div class="table-card">
+                        <div class="table-wrapper">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Booking ID</th>
+                                        <th>Property</th>
+                                        <th>Guest Details</th>
+                                        <th>Dates / Stay</th>
+                                        <th>Total (₹)</th>
+                                        <th>Payment</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bookings-table-body">
+                                    <!-- Dynamic rows loaded via JS -->
                                 </tbody>
                             </table>
                         </div>
@@ -615,6 +758,21 @@
             <div class="delete-modal-actions">
                 <button class="btn-delete-cancel" onclick="closeDeleteModal()">Cancel</button>
                 <button class="btn-delete-confirm" id="btn-delete-confirm" onclick="confirmDelete()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Admin Booking Detail Modal ===== -->
+    <div class="modal-overlay" id="booking-detail-modal">
+        <div class="modal-container" style="max-width: 540px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Booking Details</h2>
+                <button class="modal-close" onclick="closeAdminBookingDetailModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body" id="admin-booking-detail-body" style="padding: 20px 24px;">
+                <!-- Dynamic details load -->
             </div>
         </div>
     </div>

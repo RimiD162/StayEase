@@ -80,7 +80,7 @@
       "avatar": "",
       "isActive": true,
       "createdAt": "2026-06-25T01:42:58.453Z",
-      "lastLogin": "2026-06-26T01:30:04.656Z"
+      "lastLogin": "2026-06-27T06:05:12.129Z"
     }
   ],
   "admins": [
@@ -96,6 +96,33 @@
       "bio": "Stay-Ease Administrator",
       "createdAt": "2025-01-01",
       "lastLogin": "2026-06-26T02:45:11.360Z"
+    }
+  ],
+  "bookings": [
+    {
+      "_id": "json_book_hptgg4ihj",
+      "listingId": "json_s594r0tcg",
+      "listingName": "Rimi Dutta",
+      "category": "Rental",
+      "location": "Shimla, India",
+      "listingImage": "https://images.unsplash.com/photo-1566073771259-6a8506099945",
+      "guestName": "John Doe",
+      "guestEmail": "johndoe@example.com",
+      "guestPhone": "9876543210",
+      "userId": "mock_user_rimi",
+      "checkIn": "2026-07-01T00:00:00.000Z",
+      "checkOut": "2026-07-05T00:00:00.000Z",
+      "nights": 4,
+      "guests": 2,
+      "roomType": "Deluxe",
+      "pricePerNight": 5000,
+      "subtotal": 20000,
+      "tax": 3600,
+      "totalAmount": 23600,
+      "paymentMethod": "Pay at Property",
+      "specialRequests": "High floor, extra towels please.",
+      "bookingId": "SE-2026-9470",
+      "createdAt": "2026-06-26T16:03:22.616Z"
     }
   ]
 }

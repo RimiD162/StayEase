@@ -8,6 +8,7 @@ import Listing from "./models/Listing.js";
 import Admin from "./models/Admin.js";
 import { dbService } from "./src/dbService.js";
 import User from "./models/User.js";
+import Booking from "./models/Booking.js";
 import isUserLoggedIn from "./middleware/isUserLoggedIn.js";
 import isAdminLoggedIn from "./middleware/isAdminLoggedIn.js";
 
@@ -415,6 +416,134 @@ app.get("/home/lodges", isUserLoggedIn, async (req, res) => {
 
 
 // =============================================
+//  LISTING DETAIL & USER BOOKING ROUTES
+// =============================================
+
+// GET /listing/:id - Detail page
+app.get("/listing/:id", isUserLoggedIn, async (req, res) => {
+  try {
+    const listing = await dbService.getListingById(req.params.id);
+    if (!listing) {
+      return res.status(404).send("Listing not found");
+    }
+    
+    // Fetch 3 similar listings of the same category, excluding the current one
+    const category = listing.category;
+    const allOfCat = await dbService.getListings({ category });
+    const similarListings = allOfCat
+      .filter(item => (item._id || item.id).toString() !== req.params.id.toString())
+      .slice(0, 3);
+
+    // Image Gallery Images (1 main + 4 fallbacks)
+    const fallbacks = FALLBACK_IMAGES[category] || FALLBACK_IMAGES['Hotel'];
+    const galleryImages = [
+      listing.image || fallbacks[0],
+      fallbacks[1 % fallbacks.length],
+      fallbacks[2 % fallbacks.length],
+      fallbacks[3 % fallbacks.length],
+      fallbacks[4 % fallbacks.length]
+    ];
+
+    res.render("listingDetail", { listing, similarListings, galleryImages });
+  } catch (err) {
+    console.error(err);
+    res.redirect("/home");
+  }
+});
+
+// POST /booking/create - Submit booking
+app.post("/booking/create", isUserLoggedIn, async (req, res) => {
+  try {
+    const {
+      listingId, listingName, category, location, listingImage,
+      guestName, guestEmail, guestPhone,
+      checkIn, checkOut, nights, guests, roomType,
+      pricePerNight, subtotal, tax, totalAmount, paymentMethod, specialRequests
+    } = req.body;
+
+    // Server-side validation
+    if (!guestName || !guestEmail || !guestPhone || !checkIn || !checkOut || !roomType) {
+      return res.status(400).json({ success: false, error: "Please fill in all required fields." });
+    }
+
+    const phoneRegex = /^[6-9]\d{9}$/;
+    if (!phoneRegex.test(guestPhone)) {
+      return res.status(400).json({ success: false, error: "Enter a valid 10-digit mobile number." });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(guestEmail)) {
+      return res.status(400).json({ success: false, error: "Enter a valid email address." });
+    }
+
+    if (new Date(checkOut) <= new Date(checkIn)) {
+      return res.status(400).json({ success: false, error: "Check-out date must be after check-in." });
+    }
+
+    const bookingData = {
+      listingId,
+      listingName,
+      category,
+      location,
+      listingImage: listingImage || "",
+      guestName,
+      guestEmail,
+      guestPhone,
+      userId: req.session.userId,
+      checkIn: new Date(checkIn),
+      checkOut: new Date(checkOut),
+      nights: parseInt(nights) || 1,
+      guests: parseInt(guests) || 1,
+      roomType,
+      pricePerNight: parseFloat(pricePerNight),
+      subtotal: parseFloat(subtotal),
+      tax: parseFloat(tax),
+      totalAmount: parseFloat(totalAmount),
+      paymentMethod,
+      specialRequests: specialRequests || "",
+      status: "Confirmed"
+    };
+
+    const booking = await dbService.createBooking(bookingData);
+    res.status(201).json({ success: true, booking });
+  } catch (err) {
+    console.error("Booking creation error:", err);
+    res.status(500).json({ success: false, error: "Server error during booking creation." });
+  }
+});
+
+// GET /my-bookings - User bookings dashboard
+app.get("/my-bookings", isUserLoggedIn, async (req, res) => {
+  try {
+    const bookings = await dbService.getBookingsByUser(req.session.userId);
+    res.render("myBookings", { bookings });
+  } catch (err) {
+    console.error(err);
+    res.redirect("/home");
+  }
+});
+
+// POST /booking/cancel/:id - Cancel stay booking
+app.post("/booking/cancel/:id", isUserLoggedIn, async (req, res) => {
+  try {
+    const bookingId = req.params.id;
+    // Check if the booking belongs to this user
+    const bookings = await dbService.getBookingsByUser(req.session.userId);
+    const hasBooking = bookings.some(b => (b._id || b.id).toString() === bookingId.toString());
+    
+    if (!hasBooking) {
+      return res.status(403).json({ success: false, error: "Unauthorized access to booking." });
+    }
+
+    await dbService.updateBookingStatus(bookingId, "Cancelled");
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Booking cancellation failed:", err);
+    res.status(500).json({ success: false, error: "Server error during cancellation." });
+  }
+});
+
+// =============================================
 //  ADMIN AUTHENTICATION ROUTES
 // =============================================
 
@@ -648,6 +777,83 @@ app.delete("/api/listings/:id", requireAdmin, async (req, res) => {
   } catch (err) {
     console.error("Delete listing error:", err);
     res.status(500).json({ error: "Failed to delete listing" });
+  }
+});
+
+// GET admin bookings dashboard tab view
+app.get("/admin/bookings", requireAdmin, (req, res) => {
+  res.render("adminDashboard", { activePage: "bookings" });
+});
+
+// GET JSON list of bookings for admin
+app.get("/api/admin/bookings", requireAdmin, async (req, res) => {
+  try {
+    const bookings = await dbService.getAllBookings();
+    res.json(bookings);
+  } catch (err) {
+    console.error("Fetch bookings failed:", err);
+    res.status(500).json({ error: "Failed to fetch bookings" });
+  }
+});
+
+// POST update booking status from admin
+app.post("/admin/booking/status/:id", requireAdmin, async (req, res) => {
+  try {
+    const { status } = req.body;
+    if (!["Pending", "Confirmed", "Cancelled"].includes(status)) {
+      return res.status(400).json({ success: false, error: "Invalid status value" });
+    }
+    await dbService.updateBookingStatus(req.params.id, status);
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Admin status update error:", err);
+    res.status(500).json({ success: false, error: "Failed to update status" });
+  }
+});
+
+// POST delete booking record from admin
+app.post("/admin/booking/delete/:id", requireAdmin, async (req, res) => {
+  try {
+    await dbService.deleteBooking(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Admin booking delete error:", err);
+    res.status(500).json({ success: false, error: "Failed to delete booking record" });
+  }
+});
+
+// GET export bookings CSV
+app.get("/api/admin/bookings/export", requireAdmin, async (req, res) => {
+  try {
+    const bookings = await dbService.getAllBookings();
+    const headers = ["Booking ID", "Property", "Category", "Guest Name", "Email", "Phone", "Check-in", "Check-out", "Nights", "Guests", "Total Amount (INR)", "Payment Method", "Status", "Booked Date"];
+    const csvRows = [headers.join(",")];
+    for (const b of bookings) {
+      const row = [
+        `"${b.bookingId}"`,
+        `"${(b.listingName || '').replace(/"/g, '""')}"`,
+        `"${b.category}"`,
+        `"${(b.guestName || '').replace(/"/g, '""')}"`,
+        `"${(b.guestEmail || '').replace(/"/g, '""')}"`,
+        `"${b.guestPhone}"`,
+        `"${b.checkIn ? new Date(b.checkIn).toISOString().split('T')[0] : ''}"`,
+        `"${b.checkOut ? new Date(b.checkOut).toISOString().split('T')[0] : ''}"`,
+        b.nights,
+        b.guests,
+        b.totalAmount,
+        `"${b.paymentMethod}"`,
+        `"${b.status}"`,
+        `"${b.createdAt ? new Date(b.createdAt).toISOString() : ''}"`
+      ];
+      csvRows.push(row.join(","));
+    }
+    const csvString = csvRows.join("\n");
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", `attachment; filename=bookings_export_${new Date().toISOString().split('T')[0]}.csv`);
+    res.status(200).send(csvString);
+  } catch (err) {
+    console.error("Bookings CSV Export failed:", err);
+    res.status(500).send("Export failed");
   }
 });
 

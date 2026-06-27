@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Book <%= listing.name %> on Stay-Ease. Read reviews, explore amenities, and book your stay instantly.">
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/home.css">
+  <link rel="stylesheet" href="/css/listings.css">
+  <link rel="stylesheet" href="/css/detail.css">
+  <link rel="stylesheet" href="/css/booking.css">
+  <title><%= listing.name %> — Stay-Ease</title>
+</head>
+<body>
+
+  <!-- ===== Navbar ===== -->
+  <nav class="navbar" id="main-navbar">
+    <a href="/home" class="navbar-logo">Stay<span>Ease</span></a>
+
+    <div class="navbar-links" id="navbar-links">
+      <a href="/home" class="navbar-link">Home</a>
+      <a href="/home/hotel" class="navbar-link <%= listing.category === 'Hotel' ? 'active' : '' %>">Hotels</a>
+      <a href="/home/lodges" class="navbar-link <%= listing.category === 'Lodge' ? 'active' : '' %>">Lodges</a>
+      <a href="/home/rentals" class="navbar-link <%= listing.category === 'Rental' ? 'active' : '' %>">Rentals</a>
+    </div>
+
+    <% if (user) { %>
+    <div class="navbar-user" id="navbar-user" onclick="toggleDropdown()">
+      <div class="navbar-avatar">
+        <% if (user.avatar) { %>
+          <img class="loaded" src="<%= user.avatar %>" alt="<%= user.fullName %>">
+        <% } else { %>
+          <%= user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U' %>
+        <% } %>
+      </div>
+      <span class="navbar-username"><%= user.fullName ? user.fullName.split(' ')[0] : 'User' %></span>
+      <svg class="navbar-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+
+      <div class="navbar-dropdown" id="navbar-dropdown">
+        <a href="/profile" class="navbar-dropdown-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          My Profile
+        </a>
+        <a href="/my-bookings" class="navbar-dropdown-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          My Bookings
+        </a>
+        <div class="navbar-dropdown-divider"></div>
+        <form action="/user/logout" method="POST" style="margin:0;">
+          <button type="submit" class="navbar-dropdown-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Logout
+          </button>
+        </form>
+      </div>
+    </div>
+    <% } else { %>
+    <a href="/user/login" class="btn btn-gold btn-sm">Sign In</a>
+    <% } %>
+
+    <button class="navbar-toggle" id="navbar-toggle" onclick="document.getElementById('navbar-links').classList.toggle('show-mobile')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </nav>
+
+  <!-- ===== Main Details Container ===== -->
+  <div class="detail-container">
+    
+    <!-- Breadcrumbs -->
+    <div class="listing-header-breadcrumb" style="justify-content: flex-start; margin-bottom: var(--space-4);">
+      <a href="/home" style="color: var(--text-soft);">Home</a>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;color: var(--text-soft);"><polyline points="9 18 15 12 9 6"/></svg>
+      <a href="/home/<%= listing.category ? listing.category.toLowerCase() + 's' : 'hotel' %>" style="color: var(--text-soft);"><%= listing.category %>s</a>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;color: var(--text-soft);"><polyline points="9 18 15 12 9 6"/></svg>
+      <span style="color: var(--text-dark); font-weight: 500;"><%= listing.name %></span>
+    </div>
+
+    <!-- Two Column Layout -->
+    <div class="detail-layout">
+      
+      <!-- Left Column (60%) -->
+      <div class="detail-left">
+        
+        <!-- Image Gallery Section -->
+        <section class="gallery-section">
+          <div class="main-image-container">
+            <img id="main-gallery-img" class="loaded" src="<%= listing.image || galleryImages[0] %>" alt="<%= listing.name %>">
+          </div>
+          <div class="thumbnails-row">
+            <% galleryImages.forEach(function(imgUrl, idx) { %>
+              <div class="thumbnail-card <%= idx === 0 ? 'active' : '' %>" onclick="swapGalleryImage('<%= imgUrl %>', this)">
+                <img class="loaded" src="<%= imgUrl %>" alt="Thumbnail <%= idx + 1 %>">
+              </div>
+            <% }); %>
+          </div>
+        </section>
+
+        <!-- About this Property Section -->
+        <section class="property-info-section">
+          <h1 class="property-title"><%= listing.name %></h1>
+          
+          <div class="badges-row">
+            <span class="detail-badge category"><%= listing.category %></span>
+            <span class="detail-badge <%= listing.available !== false ? 'available' : 'full' %>">
+              <%= listing.available !== false ? 'Available' : 'Full' %>
+            </span>
+          </div>
+
+          <div class="detail-rating-row">
+            <% for (let i = 1; i <= 5; i++) { %>
+              <span class="star-fill"><%= i <= (listing.rating || 0) ? '★' : '☆' %></span>
+            <% } %>
+            <strong style="color: var(--text-dark); margin-left: 6px;"><%= listing.rating || 0 %>.0</strong>
+            <span style="color: var(--text-soft);">&bull; <%= (listing.rating || 3) * 4 %> reviews</span>
+          </div>
+
+          <div class="detail-location">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span><%= listing.location || 'Location not specified' %></span>
+          </div>
+
+          <hr class="divider">
+
+          <h2 class="section-subtitle-detail">About This Property</h2>
+          <p class="description-text">
+            <%= listing.description || 'Welcome to ' + listing.name + '. Experience premium travel hospitality with carefully curated options, modern facilities, and a central location near tourist spots and public transit. We promise a safe, neat, and highly satisfying service standard.' %>
+          </p>
+        </section>
+
+        <hr class="divider">
+
+        <!-- Amenities Section -->
+        <section class="amenities-section">
+          <h2 class="section-subtitle-detail">What's Included</h2>
+          <div class="amenities-detail-grid">
+            <% 
+            const allPossibleAmenities = [
+              { name: "WiFi", label: "📶 WiFi" },
+              { name: "AC", label: "❄️ AC" },
+              { name: "Pool", label: "🏊 Pool" },
+              { name: "Parking", label: "🅿️ Parking" },
+              { name: "Breakfast", label: "🍳 Breakfast" }
+            ];
+            %>
+            <% allPossibleAmenities.forEach(function(item) { %>
+              <% const isIncluded = listing.amenities && listing.amenities.some(a => a.toLowerCase() === item.name.toLowerCase()); %>
+              <div class="amenity-pill <%= isIncluded ? 'available' : 'muted' %>">
+                <span class="amenity-pill-icon">
+                  <%= item.label.split(' ')[0] %>
+                </span>
+                <span>
+                  <%= item.label.substring(item.label.indexOf(' ') + 1) %>
+                </span>
+              </div>
+            <% }); %>
+          </div>
+        </section>
+
+        <hr class="divider">
+
+        <!-- Location Box -->
+        <section class="location-section">
+          <h2 class="section-subtitle-detail">Location</h2>
+          <div class="address-box">
+            <strong>📍 Full Address:</strong> <%= listing.location || 'Stay-Ease Property Address, Shimla, India' %>
+          </div>
+          <div class="map-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>📍 [Map: <%= listing.name %>, <%= listing.location %>]</span>
+            <small style="font-weight:400; opacity:0.8;">Map rendering active for booked guest credentials</small>
+          </div>
+        </section>
+
+        <hr class="divider">
+
+        <!-- Guest Reviews Section -->
+        <section class="reviews-section">
+          <h2 class="section-subtitle-detail">Guest Reviews</h2>
+          <div class="reviews-container">
+            <div class="review-card">
+              <div class="review-header">
+                <div class="review-avatar">A</div>
+                <div class="review-user-info">
+                  <div class="review-user-name">Aditya Sharma</div>
+                  <div class="review-meta">
+                    <span class="review-stars">★★★★★</span>
+                    <span class="review-date">10 Jun 2026</span>
+                  </div>
+                </div>
+              </div>
+              <p class="review-comment">Extremely pleasant stay! The service was spot on, rooms were clean, and the location was super convenient. Highly recommended.</p>
+            </div>
+
+            <div class="review-card">
+              <div class="review-header">
+                <div class="review-avatar">R</div>
+                <div class="review-user-info">
+                  <div class="review-user-name">Riya Patel</div>
+                  <div class="review-meta">
+                    <span class="review-stars">★★★★☆</span>
+                    <span class="review-date">02 Jun 2026</span>
+                  </div>
+                </div>
+              </div>
+              <p class="review-comment">Lovely space and amazing amenities. Kids loved the swimming pool. Had a minor delay during check-in, but the staff sorted it out quickly.</p>
+            </div>
+
+            <div class="review-card">
+              <div class="review-header">
+                <div class="review-avatar">M</div>
+                <div class="review-user-info">
+                  <div class="review-user-name">Michael Vance</div>
+                  <div class="review-meta">
+                    <span class="review-stars">★★★★☆</span>
+                    <span class="review-date">24 May 2026</span>
+                  </div>
+                </div>
+              </div>
+              <p class="review-comment">The property was exactly as shown in listings. Cozy ambiance and prompt room service. Breakfast spread could have had more items, but what was there tasted good.</p>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Right Column (40%) -->
+      <div class="detail-right">
+        
+        <!-- Sticky Booking Card -->
+        <div class="booking-sticky-card">
+          <div class="booking-card-price-row">
+            <div class="booking-card-price">
+              ₹<span id="price-per-night"><%= listing.price %></span>
+              <span>/ night</span>
+            </div>
+          </div>
+
+          <div class="booking-card-meta">
+            <span>⭐ <%= listing.rating || 0 %>.0 &bull; <%= (listing.rating || 3) * 4 %> Reviews</span>
+            <span>📍 <%= listing.location.split(',')[0] %></span>
+          </div>
+
+          <!-- Date Inputs -->
+          <div class="date-pickers-container">
+            <div class="date-picker-box">
+              <div class="date-picker-label">Check In</div>
+              <input type="date" id="check-in-date" class="date-picker-input" onchange="onDatesChanged()">
+            </div>
+            <div class="date-picker-box">
+              <div class="date-picker-label">Check Out</div>
+              <input type="date" id="check-out-date" class="date-picker-input" onchange="onDatesChanged()">
+            </div>
+          </div>
+
+          <!-- Guest Count Select -->
+          <div class="guest-picker-container">
+            <div class="date-picker-label">Guests</div>
+            <select id="guest-count" class="guest-picker-select" onchange="onGuestsChanged()">
+              <% for (let i = 1; i <= 10; i++) { %>
+                <option value="<%= i %>"><%= i %> Adult<%= i > 1 ? 's' : '' %></option>
+              <% } %>
+            </select>
+          </div>
+
+          <!-- Price Breakdown Container -->
+          <div id="breakdown-area" style="display: none;">
+            <div class="price-breakdown">
+              <div class="breakdown-row">
+                <span id="subtotal-calc-label">1 night = ₹3,455</span>
+                <span id="subtotal-calc-val">₹3,455</span>
+              </div>
+              <div class="breakdown-row">
+                <span>Taxes (18%)</span>
+                <span id="taxes-val">₹622</span>
+              </div>
+              <div class="breakdown-row total">
+                <span>Total</span>
+                <span id="total-amount-val">₹4,077</span>
+              </div>
+            </div>
+          </div>
+          
+          <div id="select-dates-hint" style="color: var(--text-soft); font-size: 13px; text-align: center; margin-bottom: var(--space-4); font-weight: 500;">
+            Please select valid check-in and check-out dates to calculate total pricing.
+          </div>
+
+          <!-- Action Button -->
+          <button id="btn-open-booking" class="btn-book-now" onclick="openBookingModal()" disabled>
+            Book Now
+          </button>
+
+          <!-- Security Badges -->
+          <div class="booking-card-benefits">
+            <div class="benefit-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>✓ Free cancellation up to 24 hours prior</span>
+            </div>
+            <div class="benefit-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>✓ No booking fees or hidden costs</span>
+            </div>
+            <div class="benefit-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>✓ Instant booking confirmation</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Contact Host Section -->
+        <div class="contact-host-card">
+          <div class="contact-title">📞 Contact Property</div>
+          <div class="contact-phone">Property Phone: <%= listing.contact || '+91 98765 43210' %></div>
+          <div class="contact-actions">
+            <a href="tel:<%= listing.contact || '+919876543210' %>" class="btn-contact phone">
+              📱 Call Now
+            </a>
+            <a href="https://wa.me/<%= (listing.contact || '+919876543210').replace(/[^0-9]/g, '') %>" target="_blank" class="btn-contact whatsapp">
+              💬 WhatsApp
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Similar Listings Section -->
+    <% if (typeof similarListings !== 'undefined' && similarListings && similarListings.length > 0) { %>
+    <section class="similar-properties">
+      <h2 class="section-title-text" style="font-family:var(--font-display); font-size:24px; font-weight:700; margin-bottom:var(--space-4); color:var(--primary);">
+        Similar Properties You May Like
+      </h2>
+      <div class="listings-grid" style="grid-template-columns: repeat(3, 1fr); gap: var(--space-6);">
+        <% similarListings.forEach(function(sim, idx) { %>
+          <div class="grid-card listing-card" data-name="<%= (sim.name || '').toLowerCase() %>" data-rating="<%= sim.rating || 0 %>">
+            <div class="card-img-wrapper grid-card-img-wrap">
+              <img class="grid-card-img loaded" src="<%= sim.image || getFallbackImage(sim.category, idx) %>" alt="<%= sim.name %>" loading="lazy" onerror="this.src='<%= getFallbackImage(sim.category, idx) %>'">
+              <span class="grid-card-badge <%= sim.category.toLowerCase() %>"><%= sim.category %></span>
+              <span class="grid-card-avail <%= sim.available !== false ? 'available' : 'unavailable' %>"><%= sim.available !== false ? 'Available' : 'Full' %></span>
+            </div>
+            <div class="grid-card-body">
+              <h3 class="grid-card-name"><%= sim.name %></h3>
+              <div class="grid-card-location">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <%= sim.location || 'Location not specified' %>
+              </div>
+              <div class="grid-card-rating">
+                <% for (let i = 1; i <= 5; i++) { %>
+                  <svg class="star <%= i <= (sim.rating || 0) ? '' : 'empty' %>" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <% } %>
+                <span><%= sim.rating || 0 %>/5</span>
+              </div>
+              <% if (sim.amenities && sim.amenities.length > 0) { %>
+                <div class="grid-card-amenities">
+                  <% sim.amenities.slice(0, 4).forEach(function(a) { %>
+                    <span class="amenity-tag"><%= a %></span>
+                  <% }); %>
+                </div>
+              <% } %>
+              <div class="grid-card-footer">
+                <div class="grid-card-price">₹<%= sim.price ? sim.price.toLocaleString('en-IN') : '—' %> <span>/ night</span></div>
+                <div class="grid-card-buttons">
+                  <button type="button" class="btn-save" onclick="event.preventDefault(); toggleSaveListing('<%= sim._id || sim.id %>', event)">
+                    <span class="heart-icon">❤</span> Save
+                  </button>
+                  <a href="/listing/<%= sim._id || sim.id %>" class="btn-view-details">View Details &rarr;</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    </section>
+    <% } %>
+
+  </div>
+
+  <!-- ===== Booking Modal overlay ===== -->
+  <div class="booking-modal-overlay" id="booking-modal">
+    <div class="booking-modal-container">
+      
+      <!-- Close button -->
+      <button class="booking-modal-close" onclick="closeBookingModal()">✕</button>
+
+      <!-- Modal Content Wrapper (Forms / Success Screen) -->
+      <div id="modal-content-area">
+        
+        <!-- Modal Header -->
+        <div class="booking-modal-header">
+          <h2 class="booking-modal-title">🏨 Confirm Your Booking</h2>
+          <div class="booking-modal-subtitle" id="modal-subtitle-prop"><%= listing.name %> &bull; <%= listing.location %></div>
+        </div>
+
+        <!-- Booking Summary bar inside modal -->
+        <div class="booking-summary-bar">
+          <div class="summary-dates-col">
+            <span class="summary-dates-lbl">Stay Duration</span>
+            <span class="summary-dates-val">
+              <span id="modal-summary-checkin">—</span> 
+              &rarr; 
+              <span id="modal-summary-checkout">—</span>
+            </span>
+          </div>
+          <div class="summary-details-col">
+            <div>
+              <div class="summary-item-title">Nights</div>
+              <div class="summary-item-val" id="modal-summary-nights">—</div>
+            </div>
+            <div>
+              <div class="summary-item-title">Guests</div>
+              <div class="summary-item-val" id="modal-summary-guests">—</div>
+            </div>
+            <div>
+              <div class="summary-item-title">Total</div>
+              <div class="summary-item-val" style="color: var(--secondary);" id="modal-summary-total">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form fields -->
+        <div class="booking-modal-body">
+          <form id="booking-form" onsubmit="submitBookingForm(event)">
+            
+            <!-- User Information Section -->
+            <div class="booking-form-section">
+              <h3 class="booking-form-section-title">Personal Information</h3>
+              <div class="booking-form-grid full-width-inputs">
+                
+                <!-- Full Name -->
+                <div class="booking-field-group">
+                  <label class="booking-input-label" for="booking-guest-name">Full Name *</label>
+                  <input type="text" id="booking-guest-name" class="booking-input-field" required 
+                    placeholder="Enter your full name" value="<%= user ? user.fullName : '' %>" oninput="validateField(this)">
+                  <span class="error-message">Full name is required.</span>
+                </div>
+
+                <!-- Email -->
+                <div class="booking-field-group">
+                  <label class="booking-input-label" for="booking-guest-email">Email Address *</label>
+                  <input type="email" id="booking-guest-email" class="booking-input-field" required 
+                    placeholder="Enter your email address" value="<%= user ? user.email : '' %>" oninput="validateField(this)">
+                  <span class="error-message">Enter a valid email address.</span>
+                </div>
+
+                <!-- Phone -->
+                <div class="booking-field-group">
+                  <label class="booking-input-label" for="booking-guest-phone">Phone Number *</label>
+                  <input type="tel" id="booking-guest-phone" class="booking-input-field" required 
+                    placeholder="Enter 10-digit Indian number" value="<%= user ? (user.phone || '') : '' %>" oninput="validateField(this)">
+                  <span class="error-message">Enter a valid 10-digit mobile number starting with 6-9.</span>
+                </div>
+
+                <!-- Special Requests -->
+                <div class="booking-field-group">
+                  <label class="booking-input-label" for="booking-requests">Special Requests (Optional)</label>
+                  <textarea id="booking-requests" class="booking-input-field" style="height: 70px; resize: none;" 
+                    placeholder="Any special requirements? (e.g. early check-in, ground floor room, anniversary celebration...)"></textarea>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Stay Details Section -->
+            <div class="booking-form-section">
+              <h3 class="booking-form-section-title">Stay Details</h3>
+              <div class="booking-form-grid">
+                
+                <!-- Check In -->
+                <div class="booking-field-group">
+                  <label class="booking-input-label" for="modal-checkin-field">Check In Date *</label>
+                  <input type="date" id="modal-checkin-field" class="booking-input-field" required onchange="syncDatesFromModal()">
+                  <span class="error-message">Check-in date is required.</span>
+                </div>
+
+                <!-- Check Out -->
+                <div class="booking-field-group">
+                  <label class="booking-input-label" for="modal-checkout-field">Check Out Date *</label>
+                  <input type="date" id="modal-checkout-field" class="booking-input-field" required onchange="syncDatesFromModal()">
+                  <span class="error-message">Check-out must be after check-in.</span>
+                </div>
+
+                <!-- Guest count -->
+                <div class="booking-field-group">
+                  <label class="booking-input-label" for="modal-guests-field">Number of Guests *</label>
+                  <select id="modal-guests-field" class="booking-input-field" required onchange="syncGuestsFromModal()">
+                    <% for (let i = 1; i <= 10; i++) { %>
+                      <option value="<%= i %>"><%= i %> Guest<%= i > 1 ? 's' : '' %></option>
+                    <% } %>
+                  </select>
+                </div>
+
+                <!-- Room Type -->
+                <div class="booking-field-group">
+                  <label class="booking-input-label" for="modal-room-type">Room Type *</label>
+                  <select id="modal-room-type" class="booking-input-field" required>
+                    <option value="Standard">Standard Room</option>
+                    <option value="Deluxe" selected>Deluxe Room</option>
+                    <option value="Suite">Premium Suite</option>
+                  </select>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Payment Method Section -->
+            <div class="booking-form-section">
+              <h3 class="booking-form-section-title">Payment Method</h3>
+              <div class="payment-methods-grid">
+                
+                <!-- Option 1: Pay at property -->
+                <label class="payment-radio-card">
+                  <div class="payment-radio-left">
+                    <input type="radio" name="paymentMethod" value="Pay at Property" checked style="display:none;" onchange="updateRadioSelection(this)">
+                    <div class="payment-radio-circle"></div>
+                    <div class="payment-radio-text-wrap">
+                      <span class="payment-radio-title">Pay at Property</span>
+                      <span class="payment-radio-desc">No payment needed today. Pay during check-in.</span>
+                    </div>
+                  </div>
+                  <span class="payment-icon">🏢</span>
+                </label>
+
+                <!-- Option 2: UPI -->
+                <label class="payment-radio-card">
+                  <div class="payment-radio-left">
+                    <input type="radio" name="paymentMethod" value="UPI / Net Banking" style="display:none;" onchange="updateRadioSelection(this)">
+                    <div class="payment-radio-circle"></div>
+                    <div class="payment-radio-text-wrap">
+                      <span class="payment-radio-title">UPI / Net Banking</span>
+                      <span class="payment-radio-desc">Fast payment authorization via PhonePe, GPay, etc.</span>
+                    </div>
+                  </div>
+                  <span class="payment-icon">🏦</span>
+                </label>
+
+                <!-- Option 3: Pay partial -->
+                <label class="payment-radio-card">
+                  <div class="payment-radio-left">
+                    <input type="radio" name="paymentMethod" value="Pay Partial" style="display:none;" onchange="updateRadioSelection(this)">
+                    <div class="payment-radio-circle"></div>
+                    <div class="payment-radio-text-wrap">
+                      <span class="payment-radio-title">Pay Partial (20% Advance)</span>
+                      <span class="payment-radio-desc">Pay remaining 80% directly at the listing.</span>
+                    </div>
+                  </div>
+                  <span class="payment-icon">💰</span>
+                </label>
+
+              </div>
+            </div>
+
+            <!-- Terms checkbox -->
+            <label class="terms-checkbox-wrap">
+              <input type="checkbox" id="booking-terms" required onchange="validateFormState()">
+              <span class="terms-text">I agree to the cancellation policies, standard house rules, and Stay-Ease Terms of Service.</span>
+            </label>
+
+          </form>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="booking-modal-footer">
+          <div class="modal-footer-btns">
+            <button class="btn btn-modal-cancel" onclick="closeBookingModal()">Cancel</button>
+            <button type="button" id="btn-modal-confirm" class="btn btn-modal-confirm" onclick="triggerFormSubmit()" disabled>
+              ✓ Confirm Booking
+            </button>
+          </div>
+          <div class="security-tagline">
+            <span>🔒 Your transaction and personal data are fully encrypted</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== Footer ===== -->
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-logo">Stay<span>Ease</span></div>
+        <p class="footer-brand-text">Your perfect stay, simplified.</p>
+      </div>
+      <div>
+        <h4 class="footer-heading">Quick Links</h4>
+        <a href="/home" class="footer-link">Home</a>
+        <a href="/home/hotel" class="footer-link">Hotels</a>
+        <a href="/home/lodges" class="footer-link">Lodges</a>
+        <a href="/home/rentals" class="footer-link">Rentals</a>
+      </div>
+      <div>
+        <h4 class="footer-heading">Contact</h4>
+        <a href="#" class="footer-link">support@stayease.com</a>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2025 Stay-Ease. All rights reserved.</div>
+  </footer>
+
+  <!-- ===== Details / Gallery JS ===== -->
+  <script>
+    // Navbar scroll shadow
+    window.addEventListener('scroll',()=>{document.getElementById('main-navbar').classList.toggle('scrolled',window.scrollY>10);});
+    
+    // User dropdown toggle
+    function toggleDropdown(){const u=document.getElementById('navbar-user'),d=document.getElementById('navbar-dropdown');if(u&&d){u.classList.toggle('open');d.classList.toggle('show');}}
+    document.addEventListener('click',(e)=>{const u=document.getElementById('navbar-user');if(u&&!u.contains(e.target)){u.classList.remove('open');const d=document.getElementById('navbar-dropdown');if(d)d.classList.remove('show');}});
+
+    // Swap main gallery image
+    function swapGalleryImage(imgUrl, el) {
+      document.getElementById('main-gallery-img').src = imgUrl;
+      document.querySelectorAll('.thumbnail-card').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    // Save listings card
+    function toggleSaveListing(id, event) {
+      const btn = event.currentTarget;
+      const isSaved = btn.classList.toggle('saved');
+      if (isSaved) {
+        btn.querySelector('.heart-icon').innerText = '♥';
+        btn.style.borderColor = '#e74c3c';
+        btn.style.color = '#e74c3c';
+        showToastNotification('Saved to wishlist!');
+      } else {
+        btn.querySelector('.heart-icon').innerText = '❤';
+        btn.style.borderColor = '';
+        btn.style.color = '';
+        showToastNotification('Removed from wishlist!');
+      }
+    }
+
+    function showToastNotification(message) {
+      let container = document.getElementById('toast-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.style.cssText = 'position: fixed; bottom: 24px; right: 24px; z-index: 1000; display: flex; flex-direction: column; gap: 8px;';
+        document.body.appendChild(container);
+      }
+      const toast = document.createElement('div');
+      toast.style.cssText = 'background: #1a1f36; color: white; padding: 12px 24px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-weight: 500; font-size: 14px; animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;';
+      toast.innerText = message;
+      if (!document.getElementById('toast-keyframes')) {
+        const style = document.createElement('style');
+        style.id = 'toast-keyframes';
+        style.innerHTML = `
+          @keyframes slideIn { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+          @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+        `;
+        document.head.appendChild(style);
+      }
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+  </script>
+
+  <!-- ===== LIVE PRICING CALCULATION JS ===== -->
+  <script>
+    const pricePerNight = parseFloat(document.getElementById('price-per-night').textContent);
+    
+    // Set check-in date limits to prevent choosing past dates
+    document.addEventListener('DOMContentLoaded', () => {
+      const todayStr = new Date().toISOString().split('T')[0];
+      const checkinEl = document.getElementById('check-in-date');
+      const checkoutEl = document.getElementById('check-out-date');
+      if (checkinEl) checkinEl.min = todayStr;
+      if (checkoutEl) checkoutEl.min = todayStr;
+    });
+
+    let stayDetails = {
+      checkIn: null,
+      checkOut: null,
+      nights: 0,
+      guests: 1,
+      subtotal: 0,
+      tax: 0,
+      total: 0
+    };
+
+    function onDatesChanged() {
+      const checkinStr = document.getElementById('check-in-date').value;
+      const checkoutStr = document.getElementById('check-out-date').value;
+      
+      const checkinEl = document.getElementById('check-in-date');
+      const checkoutEl = document.getElementById('check-out-date');
+      const openBtn = document.getElementById('btn-open-booking');
+      
+      if (!checkinStr) return;
+      
+      // Update check-out min date constraint
+      if (checkinEl && checkoutEl) {
+        const checkinDate = new Date(checkinStr);
+        checkinDate.setDate(checkinDate.getDate() + 1); // Checkout must be at least 1 day after
+        checkoutEl.min = checkinDate.toISOString().split('T')[0];
+      }
+
+      if (!checkoutStr) return;
+
+      const date1 = new Date(checkinStr);
+      const date2 = new Date(checkoutStr);
+      
+      if (date2 <= date1) {
+        // Invalid date range
+        document.getElementById('breakdown-area').style.display = 'none';
+        document.getElementById('select-dates-hint').style.display = 'block';
+        document.getElementById('select-dates-hint').innerText = "Check-out date must be after check-in date!";
+        document.getElementById('select-dates-hint').style.color = 'var(--danger)';
+        openBtn.disabled = true;
+        return;
+      }
+
+      // Valid range - calculate stay duration
+      const diffTime = Math.abs(date2 - date1);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      stayDetails.checkIn = checkinStr;
+      stayDetails.checkOut = checkoutStr;
+      stayDetails.nights = diffDays;
+      stayDetails.subtotal = diffDays * pricePerNight;
+      stayDetails.tax = stayDetails.subtotal * 0.18;
+      stayDetails.total = stayDetails.subtotal + stayDetails.tax;
+
+      // Update Card Breakdown UI
+      document.getElementById('subtotal-calc-label').innerText = `${diffDays} night${diffDays > 1 ? 's' : ''} = ₹${pricePerNight.toLocaleString('en-IN')}/night`;
+      document.getElementById('subtotal-calc-val').innerText = `₹${stayDetails.subtotal.toLocaleString('en-IN')}`;
+      document.getElementById('taxes-val').innerText = `₹${stayDetails.tax.toLocaleString('en-IN')}`;
+      document.getElementById('total-amount-val').innerText = `₹${stayDetails.total.toLocaleString('en-IN')}`;
+      
+      // Update Button label
+      openBtn.innerText = `🔒 Book Now — ₹${stayDetails.total.toLocaleString('en-IN')}`;
+      
+      document.getElementById('breakdown-area').style.display = 'block';
+      document.getElementById('select-dates-hint').style.display = 'none';
+      openBtn.disabled = false;
+      
+      // Update Modal Form pre-fill values
+      document.getElementById('modal-checkin-field').value = checkinStr;
+      document.getElementById('modal-checkout-field').value = checkoutStr;
+      
+      // Update Modal limits
+      const nextDay = new Date(checkinStr);
+      nextDay.setDate(nextDay.getDate() + 1);
+      document.getElementById('modal-checkout-field').min = nextDay.toISOString().split('T')[0];
+    }
+
+    function onGuestsChanged() {
+      const select = document.getElementById('guest-count');
+      stayDetails.guests = parseInt(select.value);
+      
+      // Update Modal dropdown
+      document.getElementById('modal-guests-field').value = select.value;
+    }
+  </script>
+
+  <!-- ===== MODAL HANDLERS & VALIDATIONS ===== -->
+  <script>
+    function openBookingModal() {
+      // Confirm user is logged in
+      const userLoggedIn = <%= user ? 'true' : 'false' %>;
+      if (!userLoggedIn) {
+        // Save redirect URL in session and prompt login
+        showToastNotification("Redirecting to login first...");
+        setTimeout(() => {
+          window.location.href = `/user/login?redirect=${encodeURIComponent(window.location.pathname)}`;
+        }, 1200);
+        return;
+      }
+      
+      // Populate and open modal
+      document.getElementById('modal-summary-checkin').innerText = formatDateStr(stayDetails.checkIn);
+      document.getElementById('modal-summary-checkout').innerText = formatDateStr(stayDetails.checkOut);
+      document.getElementById('modal-summary-nights').innerText = stayDetails.nights;
+      document.getElementById('modal-summary-guests').innerText = stayDetails.guests;
+      document.getElementById('modal-summary-total').innerText = `₹${stayDetails.total.toLocaleString('en-IN')}`;
+      
+      // Trigger modal active class
+      document.getElementById('booking-modal').classList.add('active');
+      
+      // Perform initial form validation check
+      validateFormState();
+    }
+
+    function closeBookingModal() {
+      document.getElementById('booking-modal').classList.remove('active');
+    }
+
+    function formatDateStr(dateStr) {
+      if(!dateStr) return '—';
+      const d = new Date(dateStr);
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      return `${d.getDate()} ${months[d.getMonth()]}`;
+    }
+
+    // Modal forms sync date triggers back to main card details
+    function syncDatesFromModal() {
+      const checkin = document.getElementById('modal-checkin-field').value;
+      const checkout = document.getElementById('modal-checkout-field').value;
+      
+      document.getElementById('check-in-date').value = checkin;
+      document.getElementById('check-out-date').value = checkout;
+      
+      // Recalculate price fields
+      onDatesChanged();
+      
+      // Update modal headers
+      document.getElementById('modal-summary-checkin').innerText = formatDateStr(checkin);
+      document.getElementById('modal-summary-checkout').innerText = formatDateStr(checkout);
+      document.getElementById('modal-summary-nights').innerText = stayDetails.nights;
+      document.getElementById('modal-summary-total').innerText = `₹${stayDetails.total.toLocaleString('en-IN')}`;
+      
+      validateFormState();
+    }
+
+    function syncGuestsFromModal() {
+      const val = document.getElementById('modal-guests-field').value;
+      document.getElementById('guest-count').value = val;
+      stayDetails.guests = parseInt(val);
+      document.getElementById('modal-summary-guests').innerText = val;
+      validateFormState();
+    }
+
+    // Custom Radio buttons style selection triggers
+    function updateRadioSelection(radioInput) {
+      document.querySelectorAll('.payment-radio-card').forEach(card => card.classList.remove('active'));
+      const card = radioInput.closest('.payment-radio-card');
+      if (card) card.classList.add('active');
+    }
+
+    // Form validations
+    function validateField(input) {
+      const group = input.closest('.booking-field-group');
+      if (!group) return;
+      
+      let isValid = true;
+      if (input.required && !input.value.trim()) {
+        isValid = false;
+      }
+      
+      if (input.type === 'email' && input.value.trim()) {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!regex.test(input.value.trim())) isValid = false;
+      }
+      
+      if (input.id === 'booking-guest-phone' && input.value.trim()) {
+        // Indian phone number regex
+        const regex = /^[6-9]\d{9}$/;
+        if (!regex.test(input.value.trim())) isValid = false;
+      }
+
+      if (isValid) {
+        group.classList.remove('has-error');
+      } else {
+        group.classList.add('has-error');
+      }
+      
+      validateFormState();
+    }
+
+    function validateFormState() {
+      const name = document.getElementById('booking-guest-name').value.trim();
+      const email = document.getElementById('booking-guest-email').value.trim();
+      const phone = document.getElementById('booking-guest-phone').value.trim();
+      const terms = document.getElementById('booking-terms').checked;
+      
+      const checkin = document.getElementById('modal-checkin-field').value;
+      const checkout = document.getElementById('modal-checkout-field').value;
+      
+      const phoneRegex = /^[6-9]\d{9}$/;
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      
+      let isValid = true;
+      
+      if (!name) isValid = false;
+      if (!email || !emailRegex.test(email)) isValid = false;
+      if (!phone || !phoneRegex.test(phone)) isValid = false;
+      if (!checkin || !checkout || new Date(checkout) <= new Date(checkin)) isValid = false;
+      if (!terms) isValid = false;
+      
+      document.getElementById('btn-modal-confirm').disabled = !isValid;
+    }
+
+    function triggerFormSubmit() {
+      document.getElementById('booking-form').requestSubmit();
+    }
+
+    // Ajax Form Submission
+    async function submitBookingForm(event) {
+      event.preventDefault();
+      
+      const name = document.getElementById('booking-guest-name').value.trim();
+      const email = document.getElementById('booking-guest-email').value.trim();
+      const phone = document.getElementById('booking-guest-phone').value.trim();
+      const requests = document.getElementById('booking-requests').value.trim();
+      
+      const checkin = document.getElementById('modal-checkin-field').value;
+      const checkout = document.getElementById('modal-checkout-field').value;
+      const guests = parseInt(document.getElementById('modal-guests-field').value);
+      const roomType = document.getElementById('modal-room-type').value;
+      
+      const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+      
+      const btn = document.getElementById('btn-modal-confirm');
+      btn.disabled = true;
+      btn.innerText = "Processing...";
+
+      try {
+        const bodyData = {
+          listingId: '<%= listing._id || listing.id %>',
+          listingName: '<%= listing.name %>',
+          category: '<%= listing.category %>',
+          location: '<%= listing.location %>',
+          listingImage: '<%= listing.image %>',
+          guestName: name,
+          guestEmail: email,
+          guestPhone: phone,
+          checkIn: checkin,
+          checkOut: checkout,
+          nights: stayDetails.nights,
+          guests: guests,
+          roomType: roomType,
+          pricePerNight: pricePerNight,
+          subtotal: stayDetails.subtotal,
+          tax: stayDetails.tax,
+          totalAmount: stayDetails.total,
+          paymentMethod: paymentMethod,
+          specialRequests: requests
+        };
+
+        const response = await fetch('/booking/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bodyData)
+        });
+
+        const result = await response.json();
+        
+        if (response.ok && result.success) {
+          renderSuccessScreen(result.booking);
+        } else {
+          showToastNotification(result.error || "Booking failed. Try again.");
+          btn.disabled = false;
+          btn.innerText = "✓ Confirm Booking";
+        }
+      } catch (err) {
+        console.error(err);
+        showToastNotification("Network error. Please try again.");
+        btn.disabled = false;
+        btn.innerText = "✓ Confirm Booking";
+      }
+    }
+
+    function renderSuccessScreen(booking) {
+      const checkInStr = formatDateStr(booking.checkIn);
+      const checkOutStr = formatDateStr(booking.checkOut);
+      
+      const contentArea = document.getElementById('modal-content-area');
+      contentArea.innerHTML = `
+        <div class="booking-success-screen">
+          <div class="success-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <h2 class="success-title">Booking Confirmed!</h2>
+          <p class="success-desc">Congratulations! Your stay at <strong>${escapeHtml(booking.listingName)}</strong> has been successfully booked.</p>
+
+          <div class="success-details-card">
+            <div class="success-detail-row">
+              <span class="success-detail-label">Booking ID:</span>
+              <strong class="success-detail-value" style="color:var(--primary); font-family:var(--font-mono); font-size:14px;">#${booking.bookingId}</strong>
+            </div>
+            <div class="success-detail-row">
+              <span class="success-detail-label">Listing:</span>
+              <span class="success-detail-value">${escapeHtml(booking.listingName)} (${booking.category})</span>
+            </div>
+            <div class="success-detail-row">
+              <span class="success-detail-label">Dates:</span>
+              <span class="success-detail-value">📅 ${checkInStr} &rarr; ${checkOutStr} (${booking.nights} night${booking.nights > 1 ? 's' : ''})</span>
+            </div>
+            <div class="success-detail-row">
+              <span class="success-detail-label">Guests & Room:</span>
+              <span class="success-detail-value">👥 ${booking.guests} Guest${booking.guests > 1 ? 's' : ''} &bull; ${booking.roomType} Room</span>
+            </div>
+            <div class="success-detail-row">
+              <span class="success-detail-label">Payment Method:</span>
+              <span class="success-detail-value">${booking.paymentMethod}</span>
+            </div>
+            <div class="success-detail-row bold-total">
+              <span class="success-detail-label">Total Amount:</span>
+              <span class="success-detail-value">₹${booking.totalAmount.toLocaleString('en-IN')}</span>
+            </div>
+          </div>
+          
+          <p style="font-size:12.5px; color:var(--text-soft); max-width: 400px; margin-bottom: var(--space-2);">A booking receipt with check-in instructions has been sent to your email address at <strong>${escapeHtml(booking.guestEmail)}</strong>.</p>
+
+          <div class="success-actions">
+            <a href="/my-bookings" class="btn btn-success-bookings">View My Bookings</a>
+            <a href="/home" class="btn btn-success-home">Back to Home</a>
+          </div>
+        </div>
+      `;
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+  </script>
+
+</body>
+</html>

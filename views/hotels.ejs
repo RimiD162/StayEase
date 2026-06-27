@@ -138,6 +138,12 @@
             <% } %>
             <div class="grid-card-footer">
               <div class="grid-card-price">₹<%= listing.price ? listing.price.toLocaleString('en-IN') : '—' %> <span>/ night</span></div>
+              <div class="grid-card-buttons">
+                <button type="button" class="btn-save" onclick="event.preventDefault(); toggleSaveListing('<%= listing._id || listing.id %>', event)">
+                  <span class="heart-icon">❤</span> Save
+                </button>
+                <a href="/listing/<%= listing._id || listing.id %>" class="btn-view-details">View Details &rarr;</a>
+              </div>
             </div>
           </div>
         </div>
@@ -170,6 +176,46 @@
   </footer>
 
   <script>
+    function toggleSaveListing(id, event) {
+      const btn = event.currentTarget;
+      const isSaved = btn.classList.toggle('saved');
+      if (isSaved) {
+        btn.querySelector('.heart-icon').innerText = '♥';
+        btn.style.borderColor = '#e74c3c';
+        btn.style.color = '#e74c3c';
+        showToastNotification('Saved to wishlist!');
+      } else {
+        btn.querySelector('.heart-icon').innerText = '❤';
+        btn.style.borderColor = '';
+        btn.style.color = '';
+        showToastNotification('Removed from wishlist!');
+      }
+    }
+
+    function showToastNotification(message) {
+      let container = document.getElementById('toast-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.style.cssText = 'position: fixed; bottom: 24px; right: 24px; z-index: 1000; display: flex; flex-direction: column; gap: 8px;';
+        document.body.appendChild(container);
+      }
+      const toast = document.createElement('div');
+      toast.style.cssText = 'background: #1a1f36; color: white; padding: 12px 24px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-weight: 500; font-size: 14px; animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;';
+      toast.innerText = message;
+      if (!document.getElementById('toast-keyframes')) {
+        const style = document.createElement('style');
+        style.id = 'toast-keyframes';
+        style.innerHTML = `
+          @keyframes slideIn { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+          @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+        `;
+        document.head.appendChild(style);
+      }
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
     window.addEventListener('scroll',()=>{document.getElementById('main-navbar').classList.toggle('scrolled',window.scrollY>10);});
     function toggleDropdown(){const u=document.getElementById('navbar-user'),d=document.getElementById('navbar-dropdown');if(u&&d){u.classList.toggle('open');d.classList.toggle('show');}}
     document.addEventListener('click',(e)=>{const u=document.getElementById('navbar-user');if(u&&!u.contains(e.target)){u.classList.remove('open');const d=document.getElementById('navbar-dropdown');if(d)d.classList.remove('show');}});

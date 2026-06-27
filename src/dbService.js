@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 import Listing from "../models/Listing.js";
 import Admin from "../models/Admin.js";
 import User from "../models/User.js";
+import Booking from "../models/Booking.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,6 +23,7 @@ if (!mongoUrl || mongoUrl.includes("xxxxx")) {
 const defaultDb = {
   users: [],
   listings: [],
+  bookings: [],
   admins: [
     {
       id: "1",
@@ -51,6 +53,7 @@ function readJsonDb() {
     if (!db.users) db.users = [];
     if (!db.admins) db.admins = [];
     if (!db.listings) db.listings = [];
+    if (!db.bookings) db.bookings = [];
     return db;
   } catch (err) {
     console.error("Error reading JSON DB:", err);
@@ -596,5 +599,126 @@ export const dbService = {
     }
     const db = readJsonDb();
     return [...(db.admins || [])].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  },
+
+  // ===== Booking Operations =====
+  async createBooking(data) {
+    // Generate Booking ID: SE-YYYY-XXXX (random 4 digit)
+    const year = new Date().getFullYear();
+    const rand = Math.floor(1000 + Math.random() * 9000);
+    const bookingId = `SE-${year}-${rand}`;
+    const bookingData = { ...data, bookingId };
+
+    if (!useJsonDb) {
+      try {
+        const booking = new Booking(bookingData);
+        return await booking.save();
+      } catch (err) {
+        console.error("Mongoose createBooking failed, falling back:", err.message);
+        dbService.setFallbackActive();
+      }
+    }
+
+    const db = readJsonDb();
+    if (!db.bookings) db.bookings = [];
+    const newBooking = {
+      _id: "json_book_" + Math.random().toString(36).substr(2, 9),
+      status: "Confirmed",
+      specialRequests: "",
+      listingImage: "",
+      userId: null,
+      ...bookingData,
+      createdAt: new Date().toISOString()
+    };
+    db.bookings.push(newBooking);
+    writeJsonDb(db);
+    return newBooking;
+  },
+
+  async getAllBookings() {
+    if (!useJsonDb) {
+      try {
+        return await Booking.find().sort({ createdAt: -1 });
+      } catch (err) {
+        console.error("Mongoose getAllBookings failed, falling back:", err.message);
+        dbService.setFallbackActive();
+      }
+    }
+
+    const db = readJsonDb();
+    if (!db.bookings) db.bookings = [];
+    return [...db.bookings].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  },
+
+  async getBookingsByUser(userId) {
+    if (!useJsonDb) {
+      try {
+        return await Booking.find({ userId }).sort({ createdAt: -1 });
+      } catch (err) {
+        console.error("Mongoose getBookingsByUser failed, falling back:", err.message);
+        dbService.setFallbackActive();
+      }
+    }
+
+    const db = readJsonDb();
+    if (!db.bookings) db.bookings = [];
+    return db.bookings
+      .filter(b => b.userId === userId)
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  },
+
+  async getBookingsByListing(listingId) {
+    if (!useJsonDb) {
+      try {
+        return await Booking.find({ listingId }).sort({ createdAt: -1 });
+      } catch (err) {
+        console.error("Mongoose getBookingsByListing failed, falling back:", err.message);
+        dbService.setFallbackActive();
+      }
+    }
+
+    const db = readJsonDb();
+    if (!db.bookings) db.bookings = [];
+    return db.bookings
+      .filter(b => b.listingId === listingId)
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  },
+
+  async updateBookingStatus(id, status) {
+    if (!useJsonDb) {
+      try {
+        return await Booking.findByIdAndUpdate(id, { status }, { new: true });
+      } catch (err) {
+        console.error("Mongoose updateBookingStatus failed, falling back:", err.message);
+        dbService.setFallbackActive();
+      }
+    }
+
+    const db = readJsonDb();
+    if (!db.bookings) db.bookings = [];
+    const idx = db.bookings.findIndex(item => item._id === id || item.id === id || item.bookingId === id);
+    if (idx === -1) return null;
+    db.bookings[idx].status = status;
+    writeJsonDb(db);
+    return db.bookings[idx];
+  },
+
+  async deleteBooking(id) {
+    if (!useJsonDb) {
+      try {
+        return await Booking.findByIdAndDelete(id);
+      } catch (err) {
+        console.error("Mongoose deleteBooking failed, falling back:", err.message);
+        dbService.setFallbackActive();
+      }
+    }
+
+    const db = readJsonDb();
+    if (!db.bookings) db.bookings = [];
+    const idx = db.bookings.findIndex(item => item._id === id || item.id === id || item.bookingId === id);
+    if (idx === -1) return null;
+    const deleted = db.bookings.splice(idx, 1)[0];
+    writeJsonDb(db);
+    return deleted;
   }
 };

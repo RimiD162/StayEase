@@ -7,6 +7,8 @@
 let allListings = [];
 let allUsers = [];
 let filteredUsers = [];
+let allBookings = [];
+let filteredBookings = [];
 let editingId = null;
 let deletingId = null;
 let currentImageBase64 = '';
@@ -28,6 +30,7 @@ const pageTitles = {
     lodges: 'Manage Lodges',
     rentals: 'Manage Rentals',
     users: 'Manage Users',
+    bookings: 'Manage Bookings',
     profile: 'My Profile'
 };
 
@@ -36,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchListings();
     fetchProfile();
     fetchUsers();
+    fetchBookings();
     setupNavigation();
     setupStarRating();
     setupAmenityChips();
@@ -123,11 +127,24 @@ function renderStats() {
     const statLodges = document.getElementById('stat-lodges');
     const statRentals = document.getElementById('stat-rentals');
     const statTotal = document.getElementById('stat-total');
+    
+    const statBookings = document.getElementById('stat-bookings');
+    const statBookingsToday = document.getElementById('stat-bookings-today');
+    const statRevenue = document.getElementById('stat-revenue');
 
     if (statHotels) statHotels.textContent = hotels;
     if (statLodges) statLodges.textContent = lodges;
     if (statRentals) statRentals.textContent = rentals;
     if (statTotal) statTotal.textContent = allListings.length;
+    
+    if (statBookings) statBookings.textContent = allBookings.length;
+    
+    const today = new Date().toDateString();
+    const newBookingsToday = allBookings.filter(b => new Date(b.createdAt).toDateString() === today).length;
+    if (statBookingsToday) statBookingsToday.textContent = `${newBookingsToday} New Today`;
+    
+    const totalRev = allBookings.filter(b => b.status !== 'Cancelled').reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+    if (statRevenue) statRevenue.textContent = `₹${totalRev.toLocaleString('en-IN')}`;
 }
 
 function updateBadgeCounts() {
@@ -135,11 +152,13 @@ function updateBadgeCounts() {
     const lodgeBadge = document.getElementById('lodge-count-badge');
     const rentalBadge = document.getElementById('rental-count-badge');
     const userBadge = document.getElementById('user-count-badge');
+    const bookingBadge = document.getElementById('booking-count-badge');
 
     if (hotelBadge) hotelBadge.textContent = allListings.filter(l => l.category === 'Hotel').length;
     if (lodgeBadge) lodgeBadge.textContent = allListings.filter(l => l.category === 'Lodge').length;
     if (rentalBadge) rentalBadge.textContent = allListings.filter(l => l.category === 'Rental').length;
     if (userBadge) userBadge.textContent = allUsers.length;
+    if (bookingBadge) bookingBadge.textContent = allBookings.length;
 }
 
 // ===== Recent Table =====
@@ -966,4 +985,400 @@ async function handleProfileSubmit(event) {
         submitBtn.classList.remove('loading');
         submitBtn.textContent = 'Save Changes';
     }
+}
+
+// ===== Fetch Bookings =====
+async function fetchBookings() {
+    try {
+        const res = await fetch('/api/admin/bookings');
+        allBookings = await res.json();
+        filteredBookings = [...allBookings];
+        renderBookingsAll();
+    } catch (err) {
+        console.error('Failed to fetch bookings:', err);
+        showToast('Failed to load bookings', 'error');
+    }
+}
+
+// ===== Render Bookings All =====
+function renderBookingsAll() {
+    renderBookingsStats();
+    renderBookingsTable();
+    updateBadgeCounts();
+    renderStats(); // Update dashboard overview stats
+}
+
+// ===== Bookings Stats =====
+function renderBookingsStats() {
+    const revTotalEl = document.getElementById('rev-total');
+    const revMonthEl = document.getElementById('rev-month');
+    const revPendingEl = document.getElementById('rev-pending');
+    const revCancelledEl = document.getElementById('rev-cancelled-count');
+    
+    if (!revTotalEl) return;
+
+    // Total revenue from all non-cancelled bookings
+    const activeBookings = allBookings.filter(b => b.status !== 'Cancelled');
+    const totalRev = activeBookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+    revTotalEl.textContent = `₹${totalRev.toLocaleString('en-IN')}`;
+
+    // This month's revenue (non-cancelled bookings created in current month)
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+    const thisMonthRev = activeBookings
+        .filter(b => {
+            const d = new Date(b.createdAt);
+            return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+        })
+        .reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+    revMonthEl.textContent = `₹${thisMonthRev.toLocaleString('en-IN')}`;
+
+    // Pending revenue (status is Pending or payment method is Pay at Property and status is Confirmed/Pending)
+    const pendingAmount = allBookings
+        .filter(b => b.status === 'Pending' || (b.paymentMethod === 'Pay at Property' && b.status !== 'Cancelled'))
+        .reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+    revPendingEl.textContent = `₹${pendingAmount.toLocaleString('en-IN')}`;
+
+    // Cancelled count
+    const cancelledCount = allBookings.filter(b => b.status === 'Cancelled').length;
+    revCancelledEl.textContent = cancelledCount;
+}
+
+// ===== Render Bookings Table =====
+function renderBookingsTable() {
+    const tbody = document.getElementById('bookings-table-body');
+    const countEl = document.getElementById('booking-results-count');
+    if (!tbody) return;
+
+    if (countEl) countEl.textContent = filteredBookings.length;
+
+    if (filteredBookings.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8"><div class="table-empty"><div class="table-empty-icon"></div><div class="table-empty-text">No bookings found</div><div class="table-empty-sub">Adjust filters or search parameters</div></div></td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filteredBookings.map(b => {
+          const checkin = new Date(b.checkIn).toLocaleDateString('en-IN', {day:'numeric', month:'short'});
+          const checkout = new Date(b.checkOut).toLocaleDateString('en-IN', {day:'numeric', month:'short'});
+          const fallbackImg = b.category === 'Hotel' 
+              ? 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80&fit=crop' 
+              : b.category === 'Lodge' 
+                  ? 'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=800&q=80&fit=crop' 
+                  : 'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=800&q=80&fit=crop';
+          const listingImg = b.listingImage || fallbackImg;
+          
+          let statusBadgeClass = 'pending';
+          if(b.status === 'Confirmed') statusBadgeClass = 'available';
+          if(b.status === 'Cancelled') statusBadgeClass = 'unavailable';
+
+          return `
+          <tr>
+              <td><strong style="color:var(--primary); font-family:var(--font-mono); font-size:13px;">#${b.bookingId}</strong></td>
+              <td>
+                  <div style="display:flex; align-items:center; gap:10px;">
+                      <img src="${listingImg}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;" onerror="this.src='https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80&fit=crop'">
+                      <div>
+                          <div style="font-weight:600; font-size:13px; color:var(--admin-text);">${escapeHtml(b.listingName)}</div>
+                          <div style="font-size:11px; color:var(--text-soft);">${escapeHtml(b.location.split(',')[0])} &bull; ${b.category}</div>
+                      </div>
+                  </div>
+              </td>
+              <td>
+                  <div style="font-size:13px; font-weight:600; color:var(--admin-text);">${escapeHtml(b.guestName)}</div>
+                  <div style="font-size:11px; color:var(--text-soft);">${escapeHtml(b.guestEmail)} &bull; ${escapeHtml(b.guestPhone)}</div>
+              </td>
+              <td>
+                  <div style="font-size:13px; font-weight:600; color:var(--admin-text);">📅 ${checkin} &rarr; ${checkout}</div>
+                  <div style="font-size:11px; color:var(--text-soft);">${b.nights} night${b.nights > 1 ? 's' : ''} &bull; ${b.guests} guest${b.guests > 1 ? 's' : ''} &bull; ${b.roomType}</div>
+              </td>
+              <td><strong>₹${(b.totalAmount || 0).toLocaleString('en-IN')}</strong></td>
+              <td><span style="font-size:12px; color:var(--text-mid);">${b.paymentMethod}</span></td>
+              <td>
+                  <span class="status-badge ${statusBadgeClass}">
+                      <span class="status-dot"></span>
+                      ${b.status}
+                  </span>
+              </td>
+              <td>
+                  <div class="table-actions">
+                      <button class="btn-action btn-edit" title="View Details" onclick="viewAdminBookingDetails('${b._id || b.id}')">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                      </button>
+                      <button class="btn-action btn-delete" title="Delete Booking" onclick="deleteBookingPrompt('${b._id || b.id}', '${b.bookingId}')">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                      </button>
+                  </div>
+              </td>
+          </tr>
+          `;
+      }).join('');
+}
+
+// ===== Filter Bookings =====
+function filterBookings() {
+    const search = (document.getElementById('filter-booking-search')?.value || '').toLowerCase().trim();
+    const category = document.getElementById('filter-booking-category')?.value;
+    const status = document.getElementById('filter-booking-status')?.value;
+    const payment = document.getElementById('filter-booking-payment')?.value;
+    const dateStart = document.getElementById('filter-booking-date-start')?.value;
+    const dateEnd = document.getElementById('filter-booking-date-end')?.value;
+
+    filteredBookings = allBookings.filter(b => {
+        let show = true;
+        
+        if (search) {
+            const bookingId = (b.bookingId || '').toLowerCase();
+            const guestName = (b.guestName || '').toLowerCase();
+            const property = (b.listingName || '').toLowerCase();
+            const email = (b.guestEmail || '').toLowerCase();
+            const phone = (b.guestPhone || '').toLowerCase();
+            if (!bookingId.includes(search) && !guestName.includes(search) && !property.includes(search) && !email.includes(search) && !phone.includes(search)) {
+                show = false;
+            }
+        }
+        
+        if (category && b.category !== category) show = false;
+        if (status && b.status !== status) show = false;
+        if (payment && b.paymentMethod !== payment) show = false;
+        
+        if (dateStart) {
+            const bCheckin = new Date(b.checkIn).toISOString().split('T')[0];
+            if (bCheckin < dateStart) show = false;
+        }
+        
+        if (dateEnd) {
+            const bCheckin = new Date(b.checkIn).toISOString().split('T')[0];
+            if (bCheckin > dateEnd) show = false;
+        }
+        
+        return show;
+    });
+
+    renderBookingsTable();
+}
+
+// ===== Reset Booking Filters =====
+function resetBookingFilters() {
+    const search = document.getElementById('filter-booking-search');
+    const cat = document.getElementById('filter-booking-category');
+    const stat = document.getElementById('filter-booking-status');
+    const pay = document.getElementById('filter-booking-payment');
+    const start = document.getElementById('filter-booking-date-start');
+    const end = document.getElementById('filter-booking-date-end');
+
+    if (search) search.value = '';
+    if (cat) cat.value = '';
+    if (stat) stat.value = '';
+    if (pay) pay.value = '';
+    if (start) start.value = '';
+    if (end) end.value = '';
+
+    filteredBookings = [...allBookings];
+    renderBookingsTable();
+}
+
+// ===== View Booking Details in Admin Modal =====
+function viewAdminBookingDetails(id) {
+    const booking = allBookings.find(b => b._id === id || b.id === id);
+    if (!booking) return;
+
+    const modalBody = document.getElementById('admin-booking-detail-body');
+    if (!modalBody) return;
+
+    const checkin = new Date(booking.checkIn).toLocaleDateString('en-IN', {year:'numeric', month:'long', day:'numeric'});
+    const checkout = new Date(booking.checkOut).toLocaleDateString('en-IN', {year:'numeric', month:'long', day:'numeric'});
+    const created = new Date(booking.createdAt).toLocaleString();
+    const fallbackImg = booking.category === 'Hotel' 
+        ? 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80&fit=crop' 
+        : booking.category === 'Lodge' 
+            ? 'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=800&q=80&fit=crop' 
+            : 'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=800&q=80&fit=crop';
+    const listingImg = booking.listingImage || fallbackImg;
+
+    modalBody.innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:16px; color:var(--admin-text);">
+            
+            <!-- Property Header -->
+            <div style="display:flex; align-items:center; gap:12px; padding-bottom:12px; border-bottom:1px solid var(--admin-border);">
+                <img src="${listingImg}" style="width:50px;height:50px;object-fit:cover;border-radius:8px;" onerror="this.src='https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80&fit=crop'">
+                <div>
+                    <h3 style="font-size:16px; font-weight:700; margin:0;">${escapeHtml(booking.listingName)}</h3>
+                    <div style="font-size:12px; color:var(--admin-text-light); margin-top:2px;">📍 ${escapeHtml(booking.location)} (${booking.category})</div>
+                </div>
+            </div>
+
+            <!-- Booking Info Grid -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:13px;">
+                <div>
+                    <span style="color:var(--admin-text-light);">Booking ID</span><br>
+                    <strong style="font-family:var(--font-mono); font-size:14px; color:var(--primary);">#${booking.bookingId}</strong>
+                </div>
+                <div>
+                    <span style="color:var(--admin-text-light);">Booked On</span><br>
+                    <strong>${created}</strong>
+                </div>
+                <div>
+                    <span style="color:var(--admin-text-light);">Check-in Date</span><br>
+                    <strong>📅 ${checkin}</strong>
+                </div>
+                <div>
+                    <span style="color:var(--admin-text-light);">Check-out Date</span><br>
+                    <strong>📅 ${checkout}</strong>
+                </div>
+                <div>
+                    <span style="color:var(--admin-text-light);">Stay Details</span><br>
+                    <strong>${booking.nights} Night${booking.nights > 1 ? 's' : ''} &bull; ${booking.guests} Guest${booking.guests > 1 ? 's' : ''}</strong>
+                </div>
+                <div>
+                    <span style="color:var(--admin-text-light);">Room Category</span><br>
+                    <strong>${booking.roomType} Suite</strong>
+                </div>
+            </div>
+
+            <hr style="border:0; height:1px; background:var(--admin-border); margin:4px 0;">
+
+            <!-- Guest Details -->
+            <div style="font-size:13px;">
+                <span style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--admin-text-light); display:block; margin-bottom:4px;">Guest Profile</span>
+                <strong>Name:</strong> ${escapeHtml(booking.guestName)}<br>
+                <strong>Email:</strong> ${escapeHtml(booking.guestEmail)}<br>
+                <strong>Phone:</strong> ${escapeHtml(booking.guestPhone)}
+            </div>
+
+            ${booking.specialRequests ? `
+            <div style="font-size:13px;">
+                <span style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--admin-text-light); display:block; margin-bottom:4px;">Special Requests</span>
+                <div style="background:rgba(0,0,0,0.02); border:1px solid var(--admin-border); border-radius:6px; padding:10px; line-height:1.4; color:var(--admin-text-light);">
+                    ${escapeHtml(booking.specialRequests)}
+                </div>
+            </div>
+            ` : ''}
+
+            <hr style="border:0; height:1px; background:var(--admin-border); margin:4px 0;">
+
+            <!-- Payment Details -->
+            <div style="font-size:13px;">
+                <span style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--admin-text-light); display:block; margin-bottom:6px;">Financial Summary</span>
+                <div style="display:flex; flex-direction:column; gap:4px; font-size:12.5px;">
+                    <div style="display:flex; justify-content:space-between;">
+                        <span>Room Subtotal (${booking.nights} nights &times; ₹${booking.pricePerNight.toLocaleString('en-IN')})</span>
+                        <span>₹${booking.subtotal.toLocaleString('en-IN')}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between;">
+                        <span>GST Tax Charges (18%)</span>
+                        <span>₹${booking.tax.toLocaleString('en-IN')}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-weight:700; font-size:14px; border-top:1px dashed var(--admin-border); padding-top:6px; margin-top:4px;">
+                        <span>Total Paid Amount (${booking.paymentMethod})</span>
+                        <span>₹${booking.totalAmount.toLocaleString('en-IN')}</span>
+                    </div>
+                </div>
+            </div>
+
+            <hr style="border:0; height:1px; background:var(--admin-border); margin:4px 0;">
+
+            <!-- Status Modification Controls -->
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px;">
+                <div>
+                    <label class="form-label" for="update-booking-status-select" style="margin-bottom:2px; font-size:11px;">Modify Stay Status</label>
+                    <select id="update-booking-status-select" class="form-select" style="width:160px; padding:6px 10px; font-size:12.5px;" onchange="updateBookingStatusAJAX('${booking._id || booking.id}', this.value)">
+                        <option value="Pending" ${booking.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                        <option value="Confirmed" ${booking.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
+                        <option value="Cancelled" ${booking.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                    </select>
+                </div>
+                <div style="text-align:right;">
+                    <span style="font-size:11px; color:var(--admin-text-light); display:block; margin-bottom:2px;">Current Badge</span>
+                    <span class="status-badge ${booking.status === 'Confirmed' ? 'available' : (booking.status === 'Cancelled' ? 'unavailable' : 'pending')}">${booking.status}</span>
+                </div>
+            </div>
+            
+            <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
+                <button class="btn-cancel" onclick="closeAdminBookingDetailModal()">Close Details</button>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('booking-detail-modal').classList.add('active');
+}
+
+function closeAdminBookingDetailModal() {
+    const detailModal = document.getElementById('booking-detail-modal');
+    if (detailModal) detailModal.classList.remove('active');
+}
+
+// ===== Update Booking Status AJAX =====
+async function updateBookingStatusAJAX(id, status) {
+    try {
+        const res = await fetch(`/admin/booking/status/${id}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status })
+        });
+        const result = await res.json();
+        
+        if (res.ok && result.success) {
+            showToast(`Booking status updated to ${status}.`, 'success');
+            
+            // Refresh table details locally without modal closing
+            fetchBookings();
+            
+            // Update current badge inside modal if open
+            const select = document.getElementById('update-booking-status-select');
+            if (select) {
+                const badge = select.closest('div').nextElementSibling.querySelector('.status-badge');
+                if (badge) {
+                    badge.className = `status-badge ${status === 'Confirmed' ? 'available' : (status === 'Cancelled' ? 'unavailable' : 'pending')}`;
+                    badge.innerText = status;
+                }
+            }
+        } else {
+            showToast(result.error || 'Failed to update status', 'error');
+        }
+    } catch (err) {
+        console.error(err);
+        showToast('Network error during status update', 'error');
+    }
+}
+
+// ===== Delete Booking Prompt =====
+let bookingDeletingId = null;
+function deleteBookingPrompt(id, bookingId) {
+    bookingDeletingId = id;
+    const deleteModalEl = document.getElementById('delete-modal');
+    if (!deleteModalEl) return;
+
+    document.getElementById('delete-listing-name').textContent = `#${bookingId}`;
+    deleteModalEl.querySelector('.delete-modal-title').textContent = 'Delete Booking';
+    deleteModalEl.querySelector('.delete-modal-text').innerHTML = `Are you sure you want to delete Booking record <strong>#${bookingId}</strong>? This action cannot be undone.`;
+
+    const confirmBtn = document.getElementById('btn-delete-confirm');
+    confirmBtn.setAttribute('onclick', 'confirmDeleteBooking()');
+
+    deleteModalEl.classList.add('active');
+}
+
+async function confirmDeleteBooking() {
+    if (!bookingDeletingId) return;
+    try {
+        const res = await fetch(`/admin/booking/delete/${bookingDeletingId}`, { method: 'POST' });
+        const result = await res.json();
+        if (res.ok && result.success) {
+            showToast('Booking record deleted successfully.', 'success');
+            fetchBookings();
+        } else {
+            showToast(result.error || 'Failed to delete booking', 'error');
+        }
+    } catch (err) {
+        console.error(err);
+        showToast('Failed to delete booking', 'error');
+    } finally {
+        closeDeleteModal();
+        bookingDeletingId = null;
+    }
+}
+
+// ===== Export Bookings CSV =====
+function exportBookingsCSV() {
+    window.location.href = '/api/admin/bookings/export';
 }
