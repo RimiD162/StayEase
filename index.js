@@ -376,11 +376,27 @@ app.get("/rentals", (req, res) => res.redirect("/home/rentals"));
 
 app.get("/home", isUserLoggedIn, async (req, res) => {
   try {
+    const { search } = req.query;
     const listings = await dbService.getListings();
-    res.render("home", { listings: listings.slice(0, 6) });
+    
+    let searchResults = [];
+    if (search) {
+      const q = search.toLowerCase().trim();
+      searchResults = listings.filter(l => 
+        (l.name && l.name.toLowerCase().includes(q)) || 
+        (l.location && l.location.toLowerCase().includes(q)) ||
+        (l.category && l.category.toLowerCase().includes(q))
+      );
+    }
+    
+    res.render("home", { 
+      listings: listings.slice(0, 6),
+      searchResults,
+      searchQuery: search || ""
+    });
   } catch (err) {
     console.error(err);
-    res.render("home", { listings: [] });
+    res.render("home", { listings: [], searchResults: [], searchQuery: "" });
   }
 });
 
@@ -434,15 +450,12 @@ app.get("/listing/:id", isUserLoggedIn, async (req, res) => {
       .filter(item => (item._id || item.id).toString() !== req.params.id.toString())
       .slice(0, 3);
 
-    // Image Gallery Images (1 main + 4 fallbacks)
-    const fallbacks = FALLBACK_IMAGES[category] || FALLBACK_IMAGES['Hotel'];
-    const galleryImages = [
-      listing.image || fallbacks[0],
-      fallbacks[1 % fallbacks.length],
-      fallbacks[2 % fallbacks.length],
-      fallbacks[3 % fallbacks.length],
-      fallbacks[4 % fallbacks.length]
-    ];
+    // Image Gallery — only include images the admin actually uploaded
+    const galleryImages = [];
+    if (listing.image)  galleryImages.push(listing.image);
+    if (listing.image2) galleryImages.push(listing.image2);
+    if (listing.image3) galleryImages.push(listing.image3);
+    if (listing.image4) galleryImages.push(listing.image4);
 
     res.render("listingDetail", { listing, similarListings, galleryImages });
   } catch (err) {

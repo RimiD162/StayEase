@@ -11,7 +11,10 @@ let allBookings = [];
 let filteredBookings = [];
 let editingId = null;
 let deletingId = null;
-let currentImageBase64 = '';
+let currentImageBase64_1 = '';
+let currentImageBase64_2 = '';
+let currentImageBase64_3 = '';
+let currentImageBase64_4 = '';
 
 // ===== DOM References =====
 const sidebarLinks = document.querySelectorAll('.sidebar-link[data-page]');
@@ -581,7 +584,7 @@ function setupAvailabilityToggle() {
 }
 
 // ===== Image Upload =====
-function previewImage(event) {
+function previewImageSlot(slot, event) {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -592,34 +595,56 @@ function previewImage(event) {
 
     const reader = new FileReader();
     reader.onload = (e) => {
-        currentImageBase64 = e.target.result;
-        const preview = document.getElementById('image-preview');
-        const area = document.getElementById('image-upload-area');
-        preview.src = currentImageBase64;
-        area.classList.add('has-image');
+        const base64 = e.target.result;
+        if (slot === 1) currentImageBase64_1 = base64;
+        else if (slot === 2) currentImageBase64_2 = base64;
+        else if (slot === 3) currentImageBase64_3 = base64;
+        else if (slot === 4) currentImageBase64_4 = base64;
+
+        const preview = document.getElementById(`image-preview-${slot}`);
+        const area = document.getElementById(`image-upload-area-${slot}`);
+        if (preview && area) {
+            preview.src = base64;
+            area.classList.add('has-image');
+        }
     };
     reader.readAsDataURL(file);
 }
 
-function removeImage(event) {
-    event.stopPropagation();
-    currentImageBase64 = '';
-    document.getElementById('image-preview').src = '';
-    document.getElementById('image-upload-area').classList.remove('has-image');
-    document.getElementById('listing-image-input').value = '';
+function removeImageSlot(slot, event) {
+    if (event) event.stopPropagation();
+    if (slot === 1) currentImageBase64_1 = '';
+    else if (slot === 2) currentImageBase64_2 = '';
+    else if (slot === 3) currentImageBase64_3 = '';
+    else if (slot === 4) currentImageBase64_4 = '';
+
+    const preview = document.getElementById(`image-preview-${slot}`);
+    const area = document.getElementById(`image-upload-area-${slot}`);
+    const input = document.getElementById(`listing-image-input-${slot}`);
+    if (preview) preview.src = '';
+    if (area) area.classList.remove('has-image');
+    if (input) input.value = '';
 }
 
 // ===== Open Add Form =====
 function openForm(category) {
     editingId = null;
-    currentImageBase64 = '';
+    currentImageBase64_1 = '';
+    currentImageBase64_2 = '';
+    currentImageBase64_3 = '';
+    currentImageBase64_4 = '';
     document.getElementById('form-modal-title').textContent = `Add New ${category}`;
     document.getElementById('form-submit-btn').textContent = 'Save Listing';
     document.getElementById('listing-form').reset();
     document.getElementById('listing-id').value = '';
     document.getElementById('listing-category').value = category;
-    document.getElementById('image-preview').src = '';
-    document.getElementById('image-upload-area').classList.remove('has-image');
+    
+    for (let slot = 1; slot <= 4; slot++) {
+        const preview = document.getElementById(`image-preview-${slot}`);
+        const area = document.getElementById(`image-upload-area-${slot}`);
+        if (preview) preview.src = '';
+        if (area) area.classList.remove('has-image');
+    }
     document.getElementById('toggle-label-text').textContent = 'Available';
 
     setStarRating(3);
@@ -650,14 +675,23 @@ function openEditForm(id) {
     setStarRating(listing.rating || 3);
     setAmenities(listing.amenities || []);
 
-    // Image
-    currentImageBase64 = listing.image || '';
-    if (currentImageBase64) {
-        document.getElementById('image-preview').src = currentImageBase64;
-        document.getElementById('image-upload-area').classList.add('has-image');
-    } else {
-        document.getElementById('image-preview').src = '';
-        document.getElementById('image-upload-area').classList.remove('has-image');
+    // Load up to 4 images
+    currentImageBase64_1 = listing.image || '';
+    currentImageBase64_2 = listing.image2 || '';
+    currentImageBase64_3 = listing.image3 || '';
+    currentImageBase64_4 = listing.image4 || '';
+
+    for (let slot = 1; slot <= 4; slot++) {
+        const imgVal = slot === 1 ? currentImageBase64_1 : slot === 2 ? currentImageBase64_2 : slot === 3 ? currentImageBase64_3 : currentImageBase64_4;
+        const preview = document.getElementById(`image-preview-${slot}`);
+        const area = document.getElementById(`image-upload-area-${slot}`);
+        if (imgVal) {
+            if (preview) preview.src = imgVal;
+            if (area) area.classList.add('has-image');
+        } else {
+            if (preview) preview.src = '';
+            if (area) area.classList.remove('has-image');
+        }
     }
 
     formModal.classList.add('active');
@@ -694,7 +728,10 @@ async function handleFormSubmit(event) {
         rating: parseInt(document.getElementById('listing-rating').value),
         amenities: amenitiesChecked,
         available: document.getElementById('listing-available').checked,
-        image: currentImageBase64
+        image: currentImageBase64_1,
+        image2: currentImageBase64_2,
+        image3: currentImageBase64_3,
+        image4: currentImageBase64_4
     };
 
     try {

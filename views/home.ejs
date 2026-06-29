@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Stay-Ease — Find your perfect stay. Explore verified hotels, cozy lodges, and private rentals.">
+  <meta name="description"
+    content="Stay-Ease — Find your perfect stay. Explore verified hotels, cozy lodges, and private rentals.">
   <link rel="stylesheet" href="/css/global.css">
   <link rel="stylesheet" href="/css/home.css">
   <link rel="stylesheet" href="/css/listings.css">
   <title>Home — Stay-Ease</title>
 </head>
+
 <body>
 
   <!-- ===== Navbar ===== -->
@@ -23,56 +26,134 @@
     </div>
 
     <% if (user) { %>
-    <div class="navbar-user" id="navbar-user" onclick="toggleDropdown()">
-      <div class="navbar-avatar">
-        <% if (user.avatar) { %>
-          <img src="<%= user.avatar %>" alt="<%= user.fullName %>">
-        <% } else { %>
-          <%= user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U' %>
+      <div class="navbar-user" id="navbar-user" onclick="toggleDropdown()">
+        <div class="navbar-avatar">
+          <% if (user.avatar) { %>
+            <img src="<%= user.avatar %>" alt="<%= user.fullName %>">
+            <% } else { %>
+              <%= user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U' %>
+                <% } %>
+        </div>
+        <span class="navbar-username">
+          <%= user.fullName ? user.fullName.split(' ')[0] : ' User' %>
+        </span>
+        <svg class="navbar-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+
+        <div class="navbar-dropdown" id="navbar-dropdown">
+          <a href="/profile" class="navbar-dropdown-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            My Profile
+          </a>
+          <div class="navbar-dropdown-divider"></div>
+          <form action="/user/logout" method="POST" style="margin:0;">
+            <button type="submit" class="navbar-dropdown-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+              Logout
+            </button>
+          </form>
+        </div>
+      </div>
+      <% } else { %>
+        <a href="/user/login" class="btn btn-gold btn-sm">Sign In</a>
         <% } %>
-      </div>
-      <span class="navbar-username"><%= user.fullName ? user.fullName.split(' ')[0] : 'User' %></span>
-      <svg class="navbar-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
 
-      <div class="navbar-dropdown" id="navbar-dropdown">
-        <a href="/profile" class="navbar-dropdown-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          My Profile
-        </a>
-        <div class="navbar-dropdown-divider"></div>
-        <form action="/user/logout" method="POST" style="margin:0;">
-          <button type="submit" class="navbar-dropdown-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            Logout
+          <button class="navbar-toggle" id="navbar-toggle"
+            onclick="document.getElementById('navbar-links').classList.toggle('show-mobile')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
           </button>
-        </form>
-      </div>
-    </div>
-    <% } else { %>
-    <a href="/user/login" class="btn btn-gold btn-sm">Sign In</a>
-    <% } %>
-
-    <button class="navbar-toggle" id="navbar-toggle" onclick="document.getElementById('navbar-links').classList.toggle('show-mobile')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-    </button>
   </nav>
 
   <!-- ===== Hero Section ===== -->
-  <section class="hero hero-section" style="background-image: linear-gradient(rgba(26,31,54,0.55),rgba(26,31,54,0.65)), url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1600&q=85&fit=crop'); height: 580px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background-attachment: fixed; background-size: cover; background-position: center;">
+  <section class="hero hero-section"
+    style="background-image: linear-gradient(rgba(26,31,54,0.55),rgba(26,31,54,0.65)), url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1600&q=85&fit=crop'); height: 580px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background-attachment: fixed; background-size: cover; background-position: center;">
     <% if (user) { %>
-    <p class="hero-greeting">Hello, <%= user.fullName ? user.fullName.split(' ')[0] : 'Traveler' %>!</p>
-    <% } %>
-    <h1 class="hero-title">Find Your Perfect Stay</h1>
-    <p class="hero-subtitle">Explore verified hotels, cozy lodges &amp; private rentals across the best destinations</p>
+      <p class="hero-greeting">Hello, <%= user.fullName ? user.fullName.split(' ')[0] : ' Traveler' %>!</p>
+      <% } %>
+        <h1 class="hero-title">Find Your Perfect Stay</h1>
+        <p class="hero-subtitle">Explore verified hotels, cozy lodges &amp; private rentals across the best destinations
+        </p>
 
-    <div class="hero-search">
-      <input type="text" class="hero-search-input" placeholder="Search by location, property name...">
-      <button class="hero-search-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        Search
-      </button>
-    </div>
+        <div class="hero-search">
+          <input type="text" class="hero-search-input" placeholder="Search by location, property name..." value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>">
+          <button class="hero-search-btn" onclick="performSearch()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            Search
+          </button>
+        </div>
   </section>
+
+  <% if (typeof searchQuery !== 'undefined' && searchQuery) { %>
+  <!-- ===== Search Results Section ===== -->
+  <section class="section" id="search-results-section" style="scroll-margin-top: 80px;">
+    <h2 class="section-title">Search Results</h2>
+    <p class="section-subtitle">Showing <%= searchResults.length %> properties for "<%= searchQuery %>"</p>
+
+    <% if (searchResults.length > 0) { %>
+    <div class="listings-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--space-6); padding: var(--space-4) 0;">
+      <% searchResults.forEach(function(listing, index) { %>
+      <div class="grid-card listing-card" data-name="<%= (listing.name || '').toLowerCase() %>" data-rating="<%= listing.rating || 0 %>" data-available="<%= listing.available !== false ? 'true' : 'false' %>">
+        <div class="card-img-wrapper grid-card-img-wrap">
+          <img class="grid-card-img loaded" src="<%= listing.image || getFallbackImage(listing.category, index) %>" alt="<%= listing.name %>" loading="lazy" onerror="this.src='<%= getFallbackImage(listing.category, index) %>'">
+          <span class="grid-card-badge <%= listing.category.toLowerCase() %>"><%= listing.category %></span>
+          <span class="grid-card-avail <%= listing.available !== false ? 'available' : 'unavailable' %>"><%= listing.available !== false ? 'Available' : 'Full' %></span>
+        </div>
+        <div class="grid-card-body">
+          <h3 class="grid-card-name"><%= listing.name %></h3>
+          <div class="grid-card-location">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <%= listing.location || 'Location not specified' %>
+          </div>
+          <div class="grid-card-rating">
+            <% for (let i = 1; i <= 5; i++) { %>
+            <svg class="star <%= i <= (listing.rating || 0) ? '' : 'empty' %>" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <% } %>
+            <span><%= listing.rating || 0 %>/5</span>
+          </div>
+          <% if (listing.amenities && listing.amenities.length > 0) { %>
+          <div class="grid-card-amenities">
+            <% listing.amenities.slice(0, 4).forEach(function(a) { %>
+            <span class="amenity-tag"><%= a %></span>
+            <% }); %>
+          </div>
+          <% } %>
+          <div class="grid-card-footer">
+            <div class="grid-card-price">₹<%= listing.price ? listing.price.toLocaleString('en-IN') : '—' %> <span>/ night</span></div>
+            <div class="grid-card-buttons">
+              <button type="button" class="btn-save" onclick="event.preventDefault(); toggleSaveListing('<%= listing._id || listing.id %>', event)">
+                <span class="heart-icon">❤</span> Save
+              </button>
+              <a href="/listing/<%= listing._id || listing.id %>" class="btn-view-details">View Details &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <% }); %>
+    </div>
+    <% } else { %>
+    <div style="text-align: center; padding: 48px 24px; background: var(--bg-light); border-radius: 8px; margin-top: 24px; max-width: 600px; margin-left: auto; margin-right: auto; box-shadow: var(--shadow-soft);">
+      <h3 style="color: var(--text-dark); margin-bottom: 8px;">No Properties Found</h3>
+      <p style="color: var(--text-soft); margin-bottom: 16px;">We couldn't find any listings matching your search. Try checking your spelling or search terms.</p>
+      <a href="/home" class="btn btn-gold btn-sm" style="display: inline-block; text-decoration: none;">Clear Search</a>
+    </div>
+    <% } %>
+  </section>
+  <% } %>
 
   <!-- ===== Categories Section ===== -->
   <section class="section">
@@ -82,33 +163,45 @@
     <div class="categories-grid">
       <!-- Hotels -->
       <a href="/home/hotel" class="category-card">
-        <img src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&q=80&fit=crop" loading="lazy" alt="Hotels" onerror="this.src='https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80&fit=crop'">
+        <img src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&q=80&fit=crop" loading="lazy"
+          alt="Hotels"
+          onerror="this.src='https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80&fit=crop'">
         <div class="cat-overlay"></div>
         <div class="category-card-content" style="position: absolute; bottom: 20px; left: 20px; z-index: 2;">
-          <h3 class="category-card-name" style="color: white; font-size: 24px; font-weight: 700; margin: 0 0 4px 0;">Hotels</h3>
-          <p class="category-card-count" style="color: rgba(255,255,255,0.7); font-size: 14px; margin: 0 0 12px 0;">120+ Properties</p>
+          <h3 class="category-card-name" style="color: white; font-size: 24px; font-weight: 700; margin: 0 0 4px 0;">
+            Hotels</h3>
+          <p class="category-card-count" style="color: rgba(255,255,255,0.7); font-size: 14px; margin: 0 0 12px 0;">120+
+            Properties</p>
           <span class="btn btn-gold btn-sm" style="display: inline-block;">Explore &rarr;</span>
         </div>
       </a>
 
       <!-- Lodges -->
       <a href="/home/lodges" class="category-card">
-        <img src="https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=800&q=80&fit=crop" loading="lazy" alt="Lodges" onerror="this.src='https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80&fit=crop'">
+        <img src="https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=800&q=80&fit=crop" loading="lazy"
+          alt="Lodges"
+          onerror="this.src='https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80&fit=crop'">
         <div class="cat-overlay"></div>
         <div class="category-card-content" style="position: absolute; bottom: 20px; left: 20px; z-index: 2;">
-          <h3 class="category-card-name" style="color: white; font-size: 24px; font-weight: 700; margin: 0 0 4px 0;">Lodges</h3>
-          <p class="category-card-count" style="color: rgba(255,255,255,0.7); font-size: 14px; margin: 0 0 12px 0;">80+ Properties</p>
+          <h3 class="category-card-name" style="color: white; font-size: 24px; font-weight: 700; margin: 0 0 4px 0;">
+            Lodges</h3>
+          <p class="category-card-count" style="color: rgba(255,255,255,0.7); font-size: 14px; margin: 0 0 12px 0;">80+
+            Properties</p>
           <span class="btn btn-teal btn-sm" style="display: inline-block;">Explore &rarr;</span>
         </div>
       </a>
 
       <!-- Rentals -->
       <a href="/home/rentals" class="category-card">
-        <img src="https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=800&q=80&fit=crop" loading="lazy" alt="Rentals" onerror="this.src='https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80&fit=crop'">
+        <img src="https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=800&q=80&fit=crop" loading="lazy"
+          alt="Rentals"
+          onerror="this.src='https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80&fit=crop'">
         <div class="cat-overlay"></div>
         <div class="category-card-content" style="position: absolute; bottom: 20px; left: 20px; z-index: 2;">
-          <h3 class="category-card-name" style="color: white; font-size: 24px; font-weight: 700; margin: 0 0 4px 0;">Rentals</h3>
-          <p class="category-card-count" style="color: rgba(255,255,255,0.7); font-size: 14px; margin: 0 0 12px 0;">60+ Properties</p>
+          <h3 class="category-card-name" style="color: white; font-size: 24px; font-weight: 700; margin: 0 0 4px 0;">
+            Rentals</h3>
+          <p class="category-card-count" style="color: rgba(255,255,255,0.7); font-size: 14px; margin: 0 0 12px 0;">60+
+            Properties</p>
           <span class="btn btn-gold btn-sm" style="display: inline-block;">Explore &rarr;</span>
         </div>
       </a>
@@ -150,7 +243,8 @@
     <div class="footer-grid">
       <div>
         <div class="footer-brand-logo">Stay<span>Ease</span></div>
-        <p class="footer-brand-text">Your perfect stay, simplified. Explore premium hotels, cozy lodges, and private rentals all in one place.</p>
+        <p class="footer-brand-text">Your perfect stay, simplified. Explore premium hotels, cozy lodges, and private
+          rentals all in one place.</p>
       </div>
       <div>
         <h4 class="footer-heading">Quick Links</h4>
@@ -161,7 +255,7 @@
       </div>
       <div>
         <h4 class="footer-heading">Contact</h4>
-        <a href="#" class="footer-link">support@stayease.com</a>
+        <a href="#" class="footer-link">duttatimi105@gmail.com </a>
         <a href="#" class="footer-link">+91 98765 43210</a>
         <a href="#" class="footer-link">Shimla, India</a>
       </div>
@@ -236,8 +330,32 @@
         if (dd) dd.classList.remove('show');
       }
     });
+
+    // Search function handler
+    function performSearch() {
+      const q = document.querySelector('.hero-search-input').value.trim();
+      if (q) {
+        window.location.href = '/home?search=' + encodeURIComponent(q);
+      } else {
+        window.location.href = '/home';
+      }
+    }
+    
+    // Bind enter key on search input
+    document.querySelector('.hero-search-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        performSearch();
+      }
+    });
+
+    // Auto-scroll to search results if searching
+    <% if (typeof searchQuery !== 'undefined' && searchQuery) { %>
+      setTimeout(() => {
+        document.getElementById('search-results-section')?.scrollIntoView({ behavior: 'smooth' });
+      }, 300);
+    <% } %>
   </script>
-  
+
   <script>
     // Lazy load fade-in
     document.querySelectorAll('img').forEach(img => {
@@ -253,4 +371,5 @@
     });
   </script>
 </body>
+
 </html>

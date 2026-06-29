@@ -33,6 +33,18 @@ const listingSchema = new mongoose.Schema({
     type: String, // Base64 data URI
     default: "",
   },
+  image2: {
+    type: String, // Base64 data URI
+    default: "",
+  },
+  image3: {
+    type: String, // Base64 data URI
+    default: "",
+  },
+  image4: {
+    type: String, // Base64 data URI
+    default: "",
+  },
   rating: {
     type: Number,
     default: 3,

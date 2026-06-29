@@ -83,9 +83,11 @@
         
         <!-- Image Gallery Section -->
         <section class="gallery-section">
+          <% if (galleryImages.length > 0) { %>
           <div class="main-image-container">
-            <img id="main-gallery-img" class="loaded" src="<%= listing.image || galleryImages[0] %>" alt="<%= listing.name %>">
+            <img id="main-gallery-img" class="loaded" src="<%= galleryImages[0] %>" alt="<%= listing.name %>">
           </div>
+          <% if (galleryImages.length > 1) { %>
           <div class="thumbnails-row">
             <% galleryImages.forEach(function(imgUrl, idx) { %>
               <div class="thumbnail-card <%= idx === 0 ? 'active' : '' %>" onclick="swapGalleryImage('<%= imgUrl %>', this)">
@@ -93,6 +95,12 @@
               </div>
             <% }); %>
           </div>
+          <% } %>
+          <% } else { %>
+          <div class="main-image-container" style="background:#f0f0f0;display:flex;align-items:center;justify-content:center;min-height:300px;">
+            <p style="color:#999;font-size:16px;">No images available</p>
+          </div>
+          <% } %>
         </section>
 
         <!-- About this Property Section -->
@@ -111,7 +119,6 @@
               <span class="star-fill"><%= i <= (listing.rating || 0) ? '★' : '☆' %></span>
             <% } %>
             <strong style="color: var(--text-dark); margin-left: 6px;"><%= listing.rating || 0 %>.0</strong>
-            <span style="color: var(--text-soft);">&bull; <%= (listing.rating || 3) * 4 %> reviews</span>
           </div>
 
           <div class="detail-location">
@@ -171,55 +178,7 @@
           </div>
         </section>
 
-        <hr class="divider">
 
-        <!-- Guest Reviews Section -->
-        <section class="reviews-section">
-          <h2 class="section-subtitle-detail">Guest Reviews</h2>
-          <div class="reviews-container">
-            <div class="review-card">
-              <div class="review-header">
-                <div class="review-avatar">A</div>
-                <div class="review-user-info">
-                  <div class="review-user-name">Aditya Sharma</div>
-                  <div class="review-meta">
-                    <span class="review-stars">★★★★★</span>
-                    <span class="review-date">10 Jun 2026</span>
-                  </div>
-                </div>
-              </div>
-              <p class="review-comment">Extremely pleasant stay! The service was spot on, rooms were clean, and the location was super convenient. Highly recommended.</p>
-            </div>
-
-            <div class="review-card">
-              <div class="review-header">
-                <div class="review-avatar">R</div>
-                <div class="review-user-info">
-                  <div class="review-user-name">Riya Patel</div>
-                  <div class="review-meta">
-                    <span class="review-stars">★★★★☆</span>
-                    <span class="review-date">02 Jun 2026</span>
-                  </div>
-                </div>
-              </div>
-              <p class="review-comment">Lovely space and amazing amenities. Kids loved the swimming pool. Had a minor delay during check-in, but the staff sorted it out quickly.</p>
-            </div>
-
-            <div class="review-card">
-              <div class="review-header">
-                <div class="review-avatar">M</div>
-                <div class="review-user-info">
-                  <div class="review-user-name">Michael Vance</div>
-                  <div class="review-meta">
-                    <span class="review-stars">★★★★☆</span>
-                    <span class="review-date">24 May 2026</span>
-                  </div>
-                </div>
-              </div>
-              <p class="review-comment">The property was exactly as shown in listings. Cozy ambiance and prompt room service. Breakfast spread could have had more items, but what was there tasted good.</p>
-            </div>
-          </div>
-        </section>
 
       </div>
 
@@ -236,7 +195,7 @@
           </div>
 
           <div class="booking-card-meta">
-            <span>⭐ <%= listing.rating || 0 %>.0 &bull; <%= (listing.rating || 3) * 4 %> Reviews</span>
+            <span>⭐ <%= listing.rating || 0 %>.0</span>
             <span>📍 <%= listing.location.split(',')[0] %></span>
           </div>
 
